@@ -1,0 +1,56 @@
+name: Haskell CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install GHC and Cabal
+      run: |
+        if [[ "${{ runner.os }}" == "macOS" ]]; then
+          brew install ghc cabal-install
+        else
+          sudo apt-get update && sudo apt-get install -y ghc cabal-install
+        fi
+        ghc --version
+        cabal --version
+
+    - name: Cache
+      uses: actions/cache@v3
+      env:
+        cache-name: cache-cabal
+      with:
+        path: |
+          ~/.cabal
+          ~/.ghc
+        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/*.cabal') }}-${{ hashFiles('**/cabal.project') }}
+        restore-keys: |
+          ${{ runner.os }}-build-${{ env.cache-name }}-
+          ${{ runner.os }}-build-
+          ${{ runner.os }}-
+
+    - name: Install dependencies
+      run: |
+        cabal update
+        cabal build --only-dependencies --enable-tests --enable-benchmarks
+
+    - name: Build
+      run: cabal build --enable-tests --enable-benchmarks all
+
+    - name: Run tests
+      run: cabal test all
