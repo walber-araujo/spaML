@@ -1,0 +1,1 @@
+-- Estrutura de dados do modelo (probabilidades, contagem de palavras)

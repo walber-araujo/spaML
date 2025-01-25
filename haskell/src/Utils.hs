@@ -1,0 +1,1 @@
+-- Funções utilitárias (como leitura de arquivos, manipulação de dados)
