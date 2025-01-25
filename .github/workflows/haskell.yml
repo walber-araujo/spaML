@@ -30,7 +30,7 @@ jobs:
         ghc --version
         cabal --version
 
-    - name: Cache
+    - name: Cache Cabal and GHC
       uses: actions/cache@v3
       env:
         cache-name: cache-cabal
@@ -45,12 +45,10 @@ jobs:
           ${{ runner.os }}-
 
     - name: Install dependencies
-      run: |
-        cabal update
-        cabal build --only-dependencies --enable-tests --enable-benchmarks
+      run: make config
 
-    - name: Build
-      run: cabal build --enable-tests --enable-benchmarks all
+    - name: Build project
+      run: make build
 
     - name: Run tests
-      run: cabal test all
+      run: make test

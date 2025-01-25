@@ -67,7 +67,7 @@ library
     -- other-extensions:
 
     -- Other library packages from which modules are imported.
-    build-depends:    base ^>=4.17
+    build-depends:    base >= 4.17 && < 4.22,
 
     -- Directories containing source files.
     hs-source-dirs:   src
@@ -90,7 +90,7 @@ executable spaML
 
     -- Other library packages from which modules are imported.
     build-depends:
-        base ^>=4.17,
+        base >= 4.17 && < 4.22,
         spaML
 
     -- Directories containing source files.
@@ -123,5 +123,5 @@ test-suite spaML-test
 
     -- Test dependencies.
     build-depends:
-        base ^>=4.17,
+        base >= 4.17 && < 4.22,
         spaML
