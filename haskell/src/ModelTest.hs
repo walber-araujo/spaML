@@ -3,8 +3,10 @@ module ModelTest where
 -- Função para testar o modelo e calcular a acurácia
 
 import qualified Data.Vector as V
+import qualified Data.Map as Map
 import Data.List (foldl')
 import Classifier
+import Utils
 
 testModel :: V.Vector MyRecord -> Map.Map String Double -> Map.Map String Double -> IO Double
 testModel records hamProbs spamProbs = do

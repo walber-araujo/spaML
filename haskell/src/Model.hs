@@ -6,6 +6,7 @@ import qualified Data.Vector as V
 import qualified Data.Map as Map
 import Data.List (foldl')
 import Preprocessing
+import Utils
 
 -- Função para contar as palavras por classe (ham ou spam)
 countWords :: V.Vector MyRecord -> Map.Map String Int -> Map.Map String Int -> (Int, Int) -> (Map.Map String Int, Map.Map String Int, Int, Int)
