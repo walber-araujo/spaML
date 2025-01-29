@@ -1,0 +1,81 @@
+cabal-version: 2.2
+
+-- This file has been generated from package.yaml by hpack version 0.37.0.
+--
+-- see: https://github.com/sol/hpack
+
+name:           spaML
+version:        0.1.0.0
+homepage:       https://github.com/walber-araujo/spaML#readme
+bug-reports:    https://github.com/walber-araujo/spaML/issues
+author:         walber-araujo
+maintainer:     walber.wesley.felix.araujo.filho@ccc.ufcg.edu.br
+license:        BSD-3-Clause
+license-file:   LICENSE
+build-type:     Simple
+
+source-repository head
+  type: git
+  location: https://github.com/walber-araujo/spaML
+
+library
+  exposed-modules:
+      Classifier
+      CLI
+      Model
+      ModelTest
+      MyLib
+      Preprocessing
+      Training
+      Utils
+  other-modules:
+      Paths_spaML
+  autogen-modules:
+      Paths_spaML
+  hs-source-dirs:
+      src
+  build-depends:
+      base >=4.17 && <4.22
+    , bytestring
+    , cassava
+    , containers
+    , filepath
+    , vector
+  default-language: Haskell2010
+
+executable spaML-exe
+  main-is: Main.hs
+  other-modules:
+      Paths_spaML
+  autogen-modules:
+      Paths_spaML
+  hs-source-dirs:
+      app
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      base >=4.17 && <4.22
+    , bytestring
+    , cassava
+    , containers
+    , filepath
+    , spaML
+    , vector
+  default-language: Haskell2010
+
+test-suite spaML-test
+  type: exitcode-stdio-1.0
+  main-is: Main.hs
+  other-modules:
+      ClassifierTest
+      ModelTest
+      PreprocessingTest
+      TrainingTest
+      Paths_spaML
+  autogen-modules:
+      Paths_spaML
+  hs-source-dirs:
+      test
+  build-depends:
+      base >=4.17 && <4.22
+    , spaML
+  default-language: Haskell2010

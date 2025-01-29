@@ -1,0 +1,63 @@
+# The name of the package:
+name:                spaML
+# The version of the package:
+version:             0.1.0.0
+# The GitHub repository for the package:
+github:              "walber-araujo/spaML"
+# The licence for the use of the package's files:
+license:             BSD-3-Clause
+# The author of the package:
+author:              "walber-araujo"
+# The email address to contact the maintainer of the package:
+maintainer:          "walber.wesley.felix.araujo.filho@ccc.ufcg.edu.br"
+
+# Dependencies applicable to all components:
+dependencies:
+- base >= 4.17 && < 4.22
+
+# The main (unnamed) library component of the package:
+library:
+  # Directories containing source files:
+  source-dirs: src
+  dependencies:
+      - vector
+      - bytestring
+      - cassava
+      - containers
+      - filepath
+
+# The executable components of the package:
+executables:
+  # The executable component named 'spaML-exe':
+  spaML-exe:
+    # The source file exporting the 'main' function:
+    main:                Main.hs
+    # Directories containing source files:
+    source-dirs:         app
+    # GHC options applicable to the component:
+    ghc-options:
+    # Link the program with the 'threaded' version of GHC's runtime system:
+    - -threaded
+    # Make all of GHC's runtime system (RTS) options available:
+    - -rtsopts
+    # Compile so as to use simultaneous threads when running the program,
+    # based on how many processors are in the machine.
+    - -with-rtsopts=-N
+    # Dependencies applicable to the component:
+    dependencies:
+    # The main library of the package:
+    - vector
+    - bytestring
+    - cassava
+    - containers
+    - filepath
+    - spaML
+
+# The test suite components of the package. Test suites have
+# keys in common with executables:
+tests:
+  spaML-test:
+    main:                Main.hs
+    source-dirs:         test
+    dependencies:
+    - spaML
