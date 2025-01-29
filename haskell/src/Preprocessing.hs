@@ -2,7 +2,7 @@ module Preprocessing where
     
 -- Funções de pré-processamento de texto (limpeza, tokenização, etc.)
 
-import Data.List (words)
+--import Data.List (words)
 
 -- Função para preprocessar o texto (tokenização simples)
 tokenize :: String -> [String]

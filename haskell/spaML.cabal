@@ -67,7 +67,11 @@ library
     -- other-extensions:
 
     -- Other library packages from which modules are imported.
-    build-depends:    base >= 4.17 && < 4.22,
+    build-depends:    base >= 4.17 && < 4.22, 
+        vector,
+        bytestring,
+        cassava,
+        containers
 
     -- Directories containing source files.
     hs-source-dirs:   src
@@ -128,4 +132,8 @@ test-suite spaML-test
     -- Test dependencies.
     build-depends:
         base >= 4.17 && < 4.22,
-        spaML
+        spaML,
+        vector,
+        bytestring,
+        cassava,
+        containers

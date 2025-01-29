@@ -14,8 +14,9 @@ import CLI
 main :: IO ()
 main = do
     -- Carregar o arquivo CSV
-    arquivoCSV <- BL.readFile "/home/joao/Haskell/SMSSpamCollection.csv"
-    
+    arquivoCSV <- BL.readFile "C:\Users\vinic\OneDrive\UFCG\24.2\plp\projetoHaskell\spaML\data\train_data\SMSSpamCollection.csv"
+    putStrLn "Arquivo CSV carregado."
+
     -- Fazer o parsing do CSV
     let registros = decode HasHeader arquivoCSV :: Either String (V.Vector MyRecord)
     

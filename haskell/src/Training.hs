@@ -3,7 +3,9 @@ module Training where
 -- Lógica de treinamento do modelo
 
 import qualified Data.Vector as V
+import qualified Data.Map as Map
 import Model
+import Utils
 
 -- Função para treinar o modelo
 trainModel :: V.Vector MyRecord -> (Map.Map String Double, Map.Map String Double, Int, Int)
