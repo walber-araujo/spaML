@@ -1,1 +1,0 @@
--- Lógica de treinamento do modelo

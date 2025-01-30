@@ -1,1 +1,0 @@
--- Funções de pré-processamento de texto (limpeza, tokenização, etc.)

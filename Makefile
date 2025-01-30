@@ -2,7 +2,7 @@
 OS := $(shell uname)
 
 # Versão do GHC (Haskell Compiler)
-GHC_VERSION := 9.8.1  # Altere para a versão desejada do GHC
+GHC_VERSION := 9.6.6  # Altere para a versão desejada do GHC
 
 # Nome do modelo salvo
 MODEL_NAME := model_saved
