@@ -1,4 +1,4 @@
-# spaML 🚀  
+# 🚀 spaML  
 Detecção de mensagens Spam usando Haskell.  
 
 Sistema projetado por:  
