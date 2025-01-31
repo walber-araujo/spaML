@@ -7,8 +7,9 @@ module Utils where
 import Data.Csv
 import qualified Data.ByteString.Lazy as BL
 import qualified Data.Vector as V
-import Classifier
 import GHC.Generics
+import System.Info (os)
+import System.Process (callCommand)
 
 -- Defina uma estrutura de dados para as linhas do CSV
 data MyRecord = MyRecord
@@ -30,3 +31,8 @@ divideDataset records =
     let total = V.length records
         trainSize = total `div` 5 -- 20% para treinamento
     in V.splitAt trainSize records
+
+clearTerminal :: IO ()
+clearTerminal = do
+    let command = if os == "mingw32" then "cls" else "clear"
+    callCommand command
