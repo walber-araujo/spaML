@@ -21,21 +21,31 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Set up Haskell
-      uses: actions/setup-haskell@v1
-      with:
-        ghc-version: '9.4.7'         
-        cabal-version: '3.8.1.0'     
-        enable-stack: true           
-
-    - name: Verify Haskell Tools
+    - name: Install Haskell Tools (GHC, Cabal, Stack)
       run: |
-        ghc --version
-        cabal --version
+        # Para macOS
+        if [[ "${{ matrix.os }}" == "macos-latest" ]]; then
+          brew update
+          brew install haskell-stack
+        else
+          # Para Ubuntu
+          sudo apt-get update
+          sudo apt-get install -y haskell-stack
+        fi
+
+        # Atualiza o Stack para a versão mais recente
+        stack upgrade --force-download
+
+        # Instala a versão mais recente do GHC e Cabal
+        stack setup --resolver lts
+
+        # Verificação das versões instaladas
+        stack exec -- ghc --version
+        stack exec -- cabal --version
         stack --version
 
     - name: Build project
-      run: make build
+      run: stack build
 
     - name: Run tests
-      run: make test
+      run: stack test
