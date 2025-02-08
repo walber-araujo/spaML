@@ -29,7 +29,7 @@ readCSV filePath = do
 divideDataset :: V.Vector MyRecord -> (V.Vector MyRecord, V.Vector MyRecord)
 divideDataset records = 
     let total = V.length records
-        trainSize = total `div` 5 -- 20% para treinamento
+        trainSize = (total * 3) `div` 10 -- 90% para treinamento
     in V.splitAt trainSize records
 
 clearTerminal :: IO ()
