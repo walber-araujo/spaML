@@ -20,15 +20,16 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Install GHC and Cabal
+    - name: Install GHC, Cabal, and Stack
       run: |
-        if [[ "${{ runner.os }}" == "macOS" ]]; then
-          brew install ghc cabal-install
+        if [[ "${{ matrix.os }}" == "macOS" ]]; then
+          brew install ghc cabal-install haskell-stack
         else
-          sudo apt-get update && sudo apt-get install -y ghc cabal-install
+          sudo apt-get update && sudo apt-get install -y ghc cabal-install haskell-stack
         fi
         ghc --version
         cabal --version
+        stack --version
 
     - name: Build project
       run: make build
