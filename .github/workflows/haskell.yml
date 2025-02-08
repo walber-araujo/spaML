@@ -12,6 +12,7 @@ permissions:
 jobs:
   build:
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 20  # Aumentado o tempo limite para evitar cancelamento precoce
 
     strategy:
       matrix:
@@ -20,8 +21,31 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - name: Install Haskell Tools (GHC, Cabal, Stack)
+      run: |
+        # Para macOS
+        if [[ "${{ matrix.os }}" == "macos-latest" ]]; then
+          brew update
+          brew install haskell-stack cabal-install
+        else
+          # Para Ubuntu
+          sudo apt-get update
+          sudo apt-get install -y haskell-stack cabal-install
+        fi
+
+        # Atualiza o Stack para a versão mais recente
+        stack upgrade --force-download
+
+        # Instala a versão mais recente do GHC
+        stack setup --resolver lts
+
+        # Verificação das versões instaladas
+        ghc --version
+        cabal --version
+        stack --version
+
     - name: Build project
-      run: make build
+      run: stack build
 
     - name: Run tests
-      run: make test
+      run: stack test
