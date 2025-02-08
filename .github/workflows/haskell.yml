@@ -12,6 +12,7 @@ permissions:
 jobs:
   build:
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 15  
 
     strategy:
       matrix:
@@ -20,13 +21,15 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Install GHC, Cabal, and Stack
+    - name: Set up Haskell
+      uses: actions/setup-haskell@v2
+      with:
+        ghc-version: '9.4.7'         
+        cabal-version: '3.8.1.0'     
+        enable-stack: true           
+
+    - name: Verify Haskell Tools
       run: |
-        if [[ "${{ matrix.os }}" == "macOS" ]]; then
-          brew install ghc cabal-install haskell-stack
-        else
-          sudo apt-get update && sudo apt-get install -y ghc cabal-install haskell-stack
-        fi
         ghc --version
         cabal --version
         stack --version
