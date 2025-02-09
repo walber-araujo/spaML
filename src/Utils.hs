@@ -36,3 +36,11 @@ clearTerminal :: IO ()
 clearTerminal = do
     let command = if os == "mingw32" then "cls" else "clear"
     callCommand command
+
+saveToCSV :: FilePath -> String -> String -> IO()
+saveToCSV fileName classification message = do
+  let csvLine = classification ++ "," ++ message ++ "\n"
+  appendFile fileName csvLine 
+
+  clearTerminal
+  putStrLn "Data saved successfully!\n"

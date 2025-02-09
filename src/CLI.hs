@@ -7,6 +7,7 @@ import Training
 import System.IO (hFlush, stdout)
 import Classifier
 import Utils
+import Text.Read (Lexeme(String))
 
 -- Menu interativo
 menu :: IO ()
@@ -43,8 +44,17 @@ processOption option = case option of
         menu
     "3" -> do
         clearTerminal
-        putStrLn "\nTraining model manually...\n"
-        -- Implementar treinamento manual
+        putStrLn "Training model manually...\n"
+
+        putStr "Enter the file name: "
+        hFlush stdout
+        fileName <- getLine 
+        let filePath = "./data/train_data/" ++ fileName
+
+        clearTerminal 
+        trainingManualSubmenu filePath
+
+        (hamProbs, spamProbs) <- trainModelCSV filePath
         menu
     "4" -> do
         clearTerminal
@@ -87,6 +97,27 @@ classificationSubmenu hamProbs spamProbs = do
         _ -> do
             putStrLn "Invalid option. Please try again."
             classificationSubmenu hamProbs spamProbs
+
+trainingManualSubmenu :: FilePath -> IO()
+trainingManualSubmenu filePath = do
+    putStrLn "Training Manual Submenu:\n"
+
+    putStr "Enter the classification of the message (spam or ham) or 'exit' to stop: "
+    hFlush stdout
+    classification <- getLine
+
+    if classification == "exit"
+        then do
+            clearTerminal
+            putStrLn "Exiting training manual submenu\n"
+        else do
+            putStr "\nEnter the message: "
+            hFlush stdout
+            message <- getLine
+
+            saveToCSV filePath classification message
+
+            trainingManualSubmenu filePath
 
 -- Função para loop de entrada do usuário
 loop :: Map.Map String Double -> Map.Map String Double -> IO ()
