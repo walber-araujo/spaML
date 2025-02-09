@@ -11,15 +11,6 @@ MODEL_NAME := model_saved
 SRC_DIR := haskell
 BUILD_DIR := $(SRC_DIR)/dist-newstyle
 
-# Comandos específicos para Linux ou macOS
-ifeq ($(OS),Linux)
-  RM = rm -rf
-  INSTALL_CMD = sudo apt-get update && sudo apt-get install -y ghc cabal-install
-else ifeq ($(OS),Darwin)
-  RM = rm -rf
-  INSTALL_CMD = brew install ghc cabal-install
-endif
-
 # Alvos principais
 .PHONY: help config build train classify test clean explain save
 
@@ -46,7 +37,7 @@ config:
 
 # Compilar o projeto
 build:
-	cd $(SRC_DIR) && cabal build --only-dependencies --enable-tests --enable-benchmarks
+	stack build
 	@echo "Compilação concluída com sucesso."
 
 # Treinar o modelo do zero
@@ -63,7 +54,7 @@ classify:
 
 # Executar testes
 test:
-	cd $(SRC_DIR) && cabal test
+	stack test
 	@echo "Testes executados."
 
 # Limpar arquivos gerados

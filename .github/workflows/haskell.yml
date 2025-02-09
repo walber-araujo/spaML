@@ -12,6 +12,7 @@ permissions:
 jobs:
   build:
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 20  # Aumentado o tempo limite para evitar cancelamento precoce
 
     strategy:
       matrix:
@@ -20,35 +21,31 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Install GHC and Cabal
+    - name: Install Haskell Tools (GHC, Cabal, Stack)
       run: |
-        if [[ "${{ runner.os }}" == "macOS" ]]; then
-          brew install ghc cabal-install
+        # Para macOS
+        if [[ "${{ matrix.os }}" == "macos-latest" ]]; then
+          brew update
+          brew install haskell-stack cabal-install
         else
-          sudo apt-get update && sudo apt-get install -y ghc cabal-install
+          # Para Ubuntu
+          sudo apt-get update
+          sudo apt-get install -y haskell-stack cabal-install
         fi
+
+        # Atualiza o Stack para a versão mais recente
+        stack upgrade --force-download
+
+        # Instala a versão mais recente do GHC
+        stack setup --resolver lts
+
+        # Verificação das versões instaladas
         ghc --version
         cabal --version
-
-    - name: Cache Cabal and GHC
-      uses: actions/cache@v3
-      env:
-        cache-name: cache-cabal
-      with:
-        path: |
-          ~/.cabal
-          ~/.ghc
-        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/*.cabal') }}-${{ hashFiles('**/cabal.project') }}
-        restore-keys: |
-          ${{ runner.os }}-build-${{ env.cache-name }}-
-          ${{ runner.os }}-build-
-          ${{ runner.os }}-
-
-    - name: Install dependencies
-      run: make config
+        stack --version
 
     - name: Build project
-      run: make build
+      run: stack build
 
     - name: Run tests
-      run: make test
+      run: stack test

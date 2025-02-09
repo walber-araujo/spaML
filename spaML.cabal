@@ -22,9 +22,9 @@ library
   exposed-modules:
       Classifier
       CLI
+      Intro
       Model
       ModelTest
-      MyLib
       Preprocessing
       Training
       Utils
@@ -40,6 +40,7 @@ library
     , cassava
     , containers
     , filepath
+    , process
     , vector
   default-language: Haskell2010
 
@@ -58,6 +59,7 @@ executable spaML-exe
     , cassava
     , containers
     , filepath
+    , process
     , spaML
     , vector
   default-language: Haskell2010

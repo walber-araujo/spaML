@@ -25,6 +25,7 @@ library:
       - cassava
       - containers
       - filepath
+      - process
 
 # The executable components of the package:
 executables:
@@ -52,6 +53,7 @@ executables:
     - containers
     - filepath
     - spaML
+    - process
 
 # The test suite components of the package. Test suites have
 # keys in common with executables:
