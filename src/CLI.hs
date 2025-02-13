@@ -7,6 +7,8 @@ import Training
 import System.IO (hFlush, stdout)
 import Classifier
 import Utils
+import Metric
+import Intro
 
 -- Menu interativo
 menu :: IO ()
@@ -18,7 +20,7 @@ menu = do
     putStrLn "4. Classify individual messages using the default model"
     putStrLn "5. Show results with accuracy rates"
     putStrLn "6. Exit"
-    putStr "\nChoose an option: "
+    putStr "\nChoose an option (1-6): "
     hFlush stdout
 
     option <- getLine
@@ -31,32 +33,36 @@ processOption option = case option of
         putStr "Enter the path to the CSV file to train the model: "
         hFlush stdout
         path <- getLine
-
         putStrLn ""
-
         (hamProbs, spamProbs) <- trainModelCSV path
         menu
+
     "2" -> do
         clearTerminal
         putStrLn "\nReusing previous models...\n"
         -- Implementar reutilização de modelos
         menu
+
     "3" -> do
         clearTerminal
         putStrLn "\nTraining model manually...\n"
         -- Implementar treinamento manual
         menu
+
     "4" -> do
         clearTerminal
         putStrLn "\nClassifying individual messages...\n"
         (hamProbs, spamProbs) <- trainModelCSV "data/train_data/SMSSpamCollection.csv" 
         classificationSubmenu hamProbs spamProbs
+
     "5" -> do
         clearTerminal
         putStrLn "\nShowing results with accuracy rates...\n"
-        -- Implementar exibição de resultados
+        accuracy <- showAccuracy "data/train_data/SMSSpamCollection.csv"
+        putStrLn ("\nCurrently, the accuracy on the test set is: " ++ show (accuracy) ++ "%\n")
         menu
-    "6" -> putStrLn "\nExiting...\n"
+
+    "6" -> showOut
     _ -> do
         clearTerminal
         putStrLn "\nInvalid option. Please try again.\n"

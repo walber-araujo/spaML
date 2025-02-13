@@ -40,8 +40,8 @@ showIntro = do
     return ()
 
 -- Exibe uma mensagem final ao sair do sistema com efeito de digitação
-showOutro :: IO ()
-showOutro = do
+showOut :: IO ()
+showOut = do
     putStrLn "\n=========================================="
     typeWriter "   Thank you for using S P A M L!   \n"
     putStrLn "=========================================="
