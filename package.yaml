@@ -63,3 +63,6 @@ tests:
     source-dirs:         test
     dependencies:
     - spaML
+    - containers
+    - HUnit
+    - vector

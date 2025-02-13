@@ -1,4 +1,9 @@
 module Main (main) where
+import Test.HUnit
+import ClassifierTest (classifierTests)
+import ModelTest (modelTests)
+tests :: Test
+tests = TestList [classifierTests, modelTests]
 
-main :: IO ()
-main = putStrLn "Test suite not yet implemented."
+main :: IO Counts
+main = runTestTT tests
