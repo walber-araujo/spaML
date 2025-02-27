@@ -9,6 +9,7 @@ import Training
 import Classifier
 import Utils
 import Control.Monad (forever)
+import System.Exit (exitSuccess)
 
 -- Menu interativo
 menu :: IO ()
@@ -30,13 +31,13 @@ processOption :: String -> IO ()
 processOption option = case option of
     "1" -> do
         clearTerminal
-        putStr "Enter the path to the CSV file to train the model: "
+        putStr "Enter the name to the CSV file to train the model: "
         hFlush stdout
-        path <- getLine
+        fileName <- getLine
 
         putStrLn ""
 
-        (hamProbs, spamProbs) <- trainModelCSV path
+        (hamProbs, spamProbs) <- trainModelCSV ("./data/train_data/" ++ fileName)
         classificationSubmenu hamProbs spamProbs
 
         menu
@@ -69,7 +70,9 @@ processOption option = case option of
         putStrLn "\nShowing results with accuracy rates...\n"
         -- Implementar exibição de resultados
         menu
-    "6" -> putStrLn "\nExiting...\n"
+    "6" -> do
+        putStrLn "\nExiting...\n"
+        exitSuccess
     _ -> do
         clearTerminal
         putStrLn "\nInvalid option. Please try again.\n"
