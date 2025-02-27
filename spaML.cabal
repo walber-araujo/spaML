@@ -23,6 +23,7 @@ library
       Classifier
       CLI
       Intro
+      Metric
       Model
       ModelTest
       Preprocessing

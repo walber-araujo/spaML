@@ -13,6 +13,8 @@ import Intro
 -- Menu interativo
 menu :: IO ()
 menu = do
+    clearTerminal
+    putStrLn "\n=========================================="
     putStrLn "Menu Options:\n"
     putStrLn "1. Train model with categorized files"
     putStrLn "2. Reuse previous models"
@@ -60,6 +62,7 @@ processOption option = case option of
         putStrLn "\nShowing results with accuracy rates...\n"
         accuracy <- showAccuracy "data/train_data/SMSSpamCollection.csv"
         putStrLn ("\nCurrently, the accuracy on the test set is: " ++ show (accuracy) ++ "%\n")
+        waitForAnyKey
         menu
 
     "6" -> showOut

@@ -35,7 +35,7 @@ showAccuracy filePath = do
             accuracy <- testModel testSet hamProbs spamProbs
 
             putStrLn ("The model accuracy is calculated by training the model, " ++
-                      "where 70% of the data from the file is used for training, and 30% is reserved for testing. " ++
+                      "where 30% of the data from the file is used for training, and 70% is reserved for testing. " ++
                       "First, the messages are counted and categorized as spam or ham (not spam). " ++
                       "Then, the model calculates the probability of a message being spam or ham. " ++
                       "Finally, the 30% of the data set aside for testing is processed by the classifier, " ++
