@@ -26,6 +26,7 @@ library:
       - containers
       - filepath
       - process
+      - directory
 
 # The executable components of the package:
 executables:
@@ -54,6 +55,7 @@ executables:
     - filepath
     - spaML
     - process
+    - directory
 
 # The test suite components of the package. Test suites have
 # keys in common with executables:

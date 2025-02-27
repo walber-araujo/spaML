@@ -60,8 +60,7 @@ processOption option = case option of
     "5" -> do
         clearTerminal
         putStrLn "\nShowing results with accuracy rates...\n"
-        accuracy <- showAccuracy "data/train_data/SMSSpamCollection.csv"
-        putStrLn ("\nCurrently, the accuracy on the test set is: " ++ show (accuracy) ++ "%\n")
+        accuracyCSVs "data/train_data"
         waitForAnyKey
         menu
 
