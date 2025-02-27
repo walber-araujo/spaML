@@ -1,6 +1,6 @@
 module Intro where
 
-import System.IO (hFlush, stdout, hSetBuffering, stdin, BufferMode(NoBuffering))
+import System.IO (hFlush, stdout, hSetBuffering, stdin, BufferMode(NoBuffering, LineBuffering))
 import Control.Concurrent (threadDelay)
 
 -- Função que exibe um texto com efeito de digitação
@@ -32,6 +32,7 @@ waitForAnyKey = do
     hFlush stdout
     _ <- getChar  -- Captura qualquer tecla pressionada
     putStr "\b \b"  -- Apaga a tecla pressionada
+    hSetBuffering stdin LineBuffering
     return ()
 
 -- Exibe uma introdução animada ao sistema antes do menu principal
