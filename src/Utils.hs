@@ -10,6 +10,10 @@ import qualified Data.Vector as V
 import GHC.Generics
 import System.Info (os)
 import System.Process (callCommand)
+import qualified Data.Map as Map
+import qualified Data.Aeson as Aeson
+import System.IO (withFile, IOMode(..), appendFile)
+import System.Directory (doesFileExist)
 
 -- Defina uma estrutura de dados para as linhas do CSV
 data MyRecord = MyRecord
@@ -19,11 +23,14 @@ data MyRecord = MyRecord
 
 instance FromRecord MyRecord
 
+-- Define o tipo para armazenar os modelos
+type ModelMap = Map.Map String FilePath
+
 -- Função para ler o arquivo CSV
 readCSV :: FilePath -> IO (Either String (V.Vector MyRecord))
 readCSV filePath = do
   csvData <- BL.readFile filePath
-  return $ decode HasHeader csvData
+  return $ decodeWith defaultDecodeOptions HasHeader csvData
 
 -- Função para dividir os dados em treinamento e teste
 divideDataset :: V.Vector MyRecord -> (V.Vector MyRecord, V.Vector MyRecord)
@@ -44,3 +51,32 @@ saveToCSV fileName classification message = do
 
   clearTerminal
   putStrLn "Data saved successfully!\n"
+
+-- Função para carregar o JSON contendo os modelos
+loadModelMap :: FilePath -> IO (Maybe ModelMap)
+loadModelMap path = do
+    exists <- doesFileExist path
+    if exists
+        then do
+            jsonData <- BL.readFile path
+            return (Aeson.decode jsonData) 
+        else return (Just Map.empty)
+
+-- Exibir modelos disponíveis
+printModels :: ModelMap -> IO ()
+printModels models = do
+    mapM_ putStrLn (Map.keys models)
+
+-- Função para atualizar e salvar a lista de modelos
+saveModelToJSON :: String -> FilePath -> IO ()
+saveModelToJSON modelName filePath = do
+    let jsonPath = "./data/models/models.json"
+
+    -- Tenta carregar o arquivo de modelos
+    existingModels <- loadModelMap jsonPath
+    let updatedModels = Map.insert modelName filePath (maybe Map.empty id existingModels)
+
+    -- Usa withFile para garantir que o arquivo seja fechado corretamente
+    withFile jsonPath WriteMode $ \handle -> do
+        BL.hPut handle (Aeson.encode updatedModels)
+    putStrLn "\n✅ Model saved successfully!"

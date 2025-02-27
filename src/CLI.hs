@@ -3,11 +3,12 @@ module CLI where
 -- Implementação da interface de linha de comando
 
 import qualified Data.Map as Map
-import Training
+import qualified Data.ByteString.Lazy as B
 import System.IO (hFlush, stdout)
+import Training
 import Classifier
 import Utils
-import Text.Read (Lexeme(String))
+import Control.Monad (forever)
 
 -- Menu interativo
 menu :: IO ()
@@ -36,11 +37,13 @@ processOption option = case option of
         putStrLn ""
 
         (hamProbs, spamProbs) <- trainModelCSV path
+        classificationSubmenu hamProbs spamProbs
+
         menu
     "2" -> do
         clearTerminal
-        putStrLn "\nReusing previous models...\n"
-        -- Implementar reutilização de modelos
+        reusingPreviousModelSubmenu
+
         menu
     "3" -> do
         clearTerminal
@@ -116,8 +119,13 @@ trainingManualSubmenu filePath = do
             message <- getLine
 
             saveToCSV filePath classification message
-
             trainingManualSubmenu filePath
+
+    -- After training, ask for a model name and save it
+    putStr "\nEnter a name for this model: "
+    hFlush stdout
+    modelName <- getLine
+    saveModelToJSON modelName filePath
 
 -- Função para loop de entrada do usuário
 loop :: Map.Map String Double -> Map.Map String Double -> IO ()
@@ -133,3 +141,33 @@ loop hamProbs spamProbs = do
             let result = classifyMessage hamProbs spamProbs msg
             putStrLn $ "The message has been classified as: " ++ if result == 0 then "ham" else "spam"
             loop hamProbs spamProbs
+
+-- Submenu for reusing models
+reusingPreviousModelSubmenu :: IO ()
+reusingPreviousModelSubmenu = do
+    let jsonPath = "./data/models/models.json" 
+    modelMap <- loadModelMap jsonPath
+    case modelMap of
+        Just models -> do
+            putStrLn "\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            putStrLn "       Available Models       "
+            putStrLn "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            printModels models
+            putStrLn "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            putStr "\nEnter the name of the model you want to reuse: "
+            hFlush stdout
+            modelName <- getLine
+            case Map.lookup modelName models of
+                Just csvPath -> do
+                    putStrLn "\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+                    putStrLn $ "  Training with model: " ++ modelName
+                    putStrLn "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+                    (hamProbs, spamProbs) <- trainModelCSV csvPath
+                    classificationSubmenu hamProbs spamProbs
+
+                    clearTerminal
+                    menu
+                Nothing -> do
+                    putStrLn "\n⚠️  Model not found. Please try again."
+                    reusingPreviousModelSubmenu
+        Nothing -> putStrLn "\n❌ Error loading the JSON file."
