@@ -151,7 +151,7 @@ reusingPreviousModelSubmenu = do
     let jsonPath = "./data/models/models.json" 
     modelMap <- loadModelMap jsonPath
     case modelMap of
-        Just models -> do
+        models -> do
             putStrLn "\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
             putStrLn "       Available Models       "
             putStrLn "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
@@ -173,4 +173,3 @@ reusingPreviousModelSubmenu = do
                 Nothing -> do
                     putStrLn "\n⚠️  Model not found. Please try again."
                     reusingPreviousModelSubmenu
-        Nothing -> putStrLn "\n❌ Error loading the JSON file."

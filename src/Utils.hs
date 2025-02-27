@@ -5,6 +5,7 @@ module Utils where
 -- Funções utilitárias (como leitura de arquivos, manipulação de dados)
 
 import Data.Csv
+import Data.Maybe ( fromMaybe )
 import qualified Data.ByteString.Lazy as BL
 import qualified Data.Vector as V
 import GHC.Generics
@@ -53,14 +54,16 @@ saveToCSV fileName classification message = do
   putStrLn "Data saved successfully!\n"
 
 -- Função para carregar o JSON contendo os modelos
-loadModelMap :: FilePath -> IO (Maybe ModelMap)
+loadModelMap :: FilePath -> IO ModelMap
 loadModelMap path = do
     exists <- doesFileExist path
     if exists
         then do
             jsonData <- BL.readFile path
-            return (Aeson.decode jsonData) 
-        else return (Just Map.empty)
+            case Aeson.decode jsonData of
+                Just models -> return models
+                Nothing     -> return Map.empty  -- Retorna um mapa vazio se o JSON for inválido
+        else return Map.empty
 
 -- Exibir modelos disponíveis
 printModels :: ModelMap -> IO ()
@@ -74,9 +77,7 @@ saveModelToJSON modelName filePath = do
 
     -- Tenta carregar o arquivo de modelos
     existingModels <- loadModelMap jsonPath
-    let updatedModels = Map.insert modelName filePath (maybe Map.empty id existingModels)
-
-    -- Usa withFile para garantir que o arquivo seja fechado corretamente
-    withFile jsonPath WriteMode $ \handle -> do
-        BL.hPut handle (Aeson.encode updatedModels)
+    let updatedModels = Map.insert modelName filePath existingModels
+    BL.writeFile jsonPath (Aeson.encode updatedModels)
+    
     putStrLn "\n✅ Model saved successfully!"
