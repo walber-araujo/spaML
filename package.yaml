@@ -28,6 +28,7 @@ library:
       - directory
       - filepath
       - process
+      - directory
 
 # The executable components of the package:
 executables:

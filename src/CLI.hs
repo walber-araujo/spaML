@@ -8,12 +8,16 @@ import System.IO (hFlush, stdout)
 import Training
 import Classifier
 import Utils
+import Metric
+import Intro
 import Control.Monad (forever)
 import System.Exit (exitSuccess)
 
 -- Menu interativo
 menu :: IO ()
 menu = do
+    clearTerminal
+    putStrLn "\n=========================================="
     putStrLn "Menu Options:\n"
     putStrLn "1. Train model with categorized files"
     putStrLn "2. Reuse previous models"
@@ -21,7 +25,7 @@ menu = do
     putStrLn "4. Classify individual messages using the default model"
     putStrLn "5. Show results with accuracy rates"
     putStrLn "6. Exit"
-    putStr "\nChoose an option: "
+    putStr "\nChoose an option (1-6): "
     hFlush stdout
 
     option <- getLine
@@ -33,6 +37,9 @@ processOption option = case option of
         clearTerminal
         putStr "Enter the name to the CSV file to train the model: "
         hFlush stdout
+        path <- getLine
+        putStrLn ""
+        (hamProbs, spamProbs) <- trainModelCSV path
         fileName <- getLine
 
         putStrLn ""
@@ -41,11 +48,13 @@ processOption option = case option of
         classificationSubmenu hamProbs spamProbs
 
         menu
+
     "2" -> do
         clearTerminal
         reusingPreviousModelSubmenu
 
         menu
+
     "3" -> do
         clearTerminal
         putStrLn "Training model manually...\n"
@@ -60,18 +69,22 @@ processOption option = case option of
 
         (hamProbs, spamProbs) <- trainModelCSV filePath
         menu
+
     "4" -> do
         clearTerminal
         putStrLn "\nClassifying individual messages...\n"
         (hamProbs, spamProbs) <- trainModelCSV "data/train_data/SMSSpamCollection.csv" 
         classificationSubmenu hamProbs spamProbs
+
     "5" -> do
         clearTerminal
         putStrLn "\nShowing results with accuracy rates...\n"
-        -- Implementar exibição de resultados
+        accuracyCSVs "data/train_data"
+        waitForAnyKey
         menu
+
     "6" -> do
-        putStrLn "\nExiting...\n"
+        showOut
         exitSuccess
     _ -> do
         clearTerminal
