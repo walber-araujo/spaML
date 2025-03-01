@@ -104,31 +104,35 @@ classificationSubmenu hamProbs spamProbs = do
             putStrLn "Invalid option. Please try again."
             classificationSubmenu hamProbs spamProbs
 
-trainingManualSubmenu :: FilePath -> IO()
-trainingManualSubmenu filePath = do
-    putStrLn "Training Manual Submenu:\n"
-
+trainingManualLoop :: FilePath -> IO ()
+trainingManualLoop filePath = do
     putStr "Enter the classification of the message (spam or ham) or 'exit' to stop: "
     hFlush stdout
-    classification <- getLine
+    classification <- getLine 
 
     if classification == "exit"
-        then do
-            clearTerminal
-            putStrLn "Exiting training manual submenu\n"
+        then return ()  
         else do
             putStr "\nEnter the message: "
             hFlush stdout
-            message <- getLine
+            message <- getLine  
 
-            saveToCSV filePath classification message
-            trainingManualSubmenu filePath
+            saveToCSV filePath classification message  
+            trainingManualLoop filePath  
 
-    -- After training, ask for a model name and save it
+trainingManualSubmenu :: FilePath -> IO ()
+trainingManualSubmenu filePath = do
+    putStrLn "Training Manual Submenu:\n"
+    
+    trainingManualLoop filePath  
+
     putStr "\nEnter a name for this model: "
     hFlush stdout
     modelName <- getLine
-    saveModelToJSON modelName filePath
+    saveModelToJSON modelName filePath  
+
+    clearTerminal
+    putStrLn "Training manual completed and model saved.\n"
 
 -- Função para loop de entrada do usuário
 loop :: Map.Map String Double -> Map.Map String Double -> IO ()
