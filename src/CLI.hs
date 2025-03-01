@@ -37,9 +37,6 @@ processOption option = case option of
         clearTerminal
         putStr "Enter the name to the CSV file to train the model: "
         hFlush stdout
-        path <- getLine
-        putStrLn ""
-        (hamProbs, spamProbs) <- trainModelCSV path
         fileName <- getLine
 
         putStrLn ""
