@@ -21,9 +21,11 @@ library:
   source-dirs: src
   dependencies:
       - vector
+      - aeson
       - bytestring
       - cassava
       - containers
+      - directory
       - filepath
       - process
       - directory
@@ -48,14 +50,15 @@ executables:
     # Dependencies applicable to the component:
     dependencies:
     # The main library of the package:
-    - vector
+    - aeson
     - bytestring
     - cassava
     - containers
-    - filepath
-    - spaML
-    - process
     - directory
+    - filepath
+    - process
+    - vector
+    - spaML
 
 # The test suite components of the package. Test suites have
 # keys in common with executables:
@@ -65,3 +68,4 @@ tests:
     source-dirs:         test
     dependencies:
     - spaML
+    - aeson
