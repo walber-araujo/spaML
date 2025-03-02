@@ -4,7 +4,6 @@ module CLI where
 
 import qualified Data.Map as Map
 import qualified Data.ByteString.Lazy as B
-import System.IO (hFlush, stdout)
 import Training
 import Classifier
 import Utils
@@ -19,14 +18,14 @@ menu = do
     clearTerminal
     putStrLn "\n=========================================="
     putStrLn "Menu Options:\n"
-    putStrLn "1. Train model with categorized files"
-    putStrLn "2. Reuse previous models"
+    putStrLn "1. Reuse previous models"
+    putStrLn "2. Add new model"
     putStrLn "3. Train model manually"
     putStrLn "4. Classify individual messages using the default model"
     putStrLn "5. Show results with accuracy rates"
     putStrLn "6. Exit"
     putStr "\nChoose an option (1-6): "
-    hFlush stdout
+    flushOutput
 
     option <- getLine
     processOption option
@@ -35,29 +34,22 @@ processOption :: String -> IO ()
 processOption option = case option of
     "1" -> do
         clearTerminal
-        putStr "Enter the name to the CSV file to train the model: "
-        hFlush stdout
-        fileName <- getLine
-
-        putStrLn ""
-
-        (hamProbs, spamProbs) <- trainModelCSV ("./data/train_data/" ++ fileName)
-        classificationSubmenu hamProbs spamProbs
+        reusingPreviousModelSubmenu
 
         menu
 
     "2" -> do
         clearTerminal
-        reusingPreviousModelSubmenu
+        addNewModelSubmenu
 
-        menu
+        menu 
 
     "3" -> do
         clearTerminal
         putStrLn "Training model manually...\n"
 
         putStr "Enter the file name: "
-        hFlush stdout
+        flushOutput
         fileName <- getLine 
         let filePath = "./data/train_data/" ++ fileName
 
@@ -83,6 +75,7 @@ processOption option = case option of
     "6" -> do
         showOut
         exitSuccess
+
     _ -> do
         clearTerminal
         putStrLn "\nInvalid option. Please try again.\n"
@@ -96,7 +89,7 @@ classificationSubmenu hamProbs spamProbs = do
     putStrLn "1. Classify a message"
     putStrLn "2. Return to main menu"
     putStr "\nChoose an option: "
-    hFlush stdout
+    flushOutput
 
     option <- getLine
     case option of
@@ -116,19 +109,21 @@ classificationSubmenu hamProbs spamProbs = do
 
 trainingManualLoop :: FilePath -> IO ()
 trainingManualLoop filePath = do
-    putStr "Enter the classification of the message (spam or ham) or 'exit' to stop: "
-    hFlush stdout
-    classification <- getLine 
+    putStrLn "Enter spam messages first. Type 'exit' to move to ham messages."
+    collectMessages "spam" 
+    putStrLn "Now enter ham messages. Type 'exit' to stop."
+    collectMessages "ham"  
+  where
+    collectMessages classification = do
+        putStr "\nEnter a message (or 'exit' to stop): "
+        flushOutput
+        message <- getLine
 
-    if classification == "exit"
-        then return ()  
-        else do
-            putStr "\nEnter the message: "
-            hFlush stdout
-            message <- getLine  
-
-            saveToCSV filePath classification message  
-            trainingManualLoop filePath  
+        if message == "exit"
+            then return ()
+            else do
+                saveToCSV filePath classification message
+                collectMessages classification  
 
 trainingManualSubmenu :: FilePath -> IO ()
 trainingManualSubmenu filePath = do
@@ -137,7 +132,7 @@ trainingManualSubmenu filePath = do
     trainingManualLoop filePath  
 
     putStr "\nEnter a name for this model: "
-    hFlush stdout
+    flushOutput
     modelName <- getLine
     saveModelToJSON modelName filePath  
 
@@ -148,7 +143,7 @@ trainingManualSubmenu filePath = do
 loop :: Map.Map String Double -> Map.Map String Double -> IO ()
 loop hamProbs spamProbs = do
     putStr "> "
-    hFlush stdout
+    flushOutput
     msg <- getLine
     if msg == "exit"
         then do 
@@ -158,6 +153,18 @@ loop hamProbs spamProbs = do
             let result = classifyMessage hamProbs spamProbs msg
             putStrLn $ "The message has been classified as: " ++ if result == 0 then "ham" else "spam"
             loop hamProbs spamProbs
+
+addNewModelSubmenu :: IO()
+addNewModelSubmenu = do
+    putStr "Enter the new model name: "
+    flushOutput
+    modelName <- getLine
+
+    putStr "Enter the model path: "
+    flushOutput
+    modelPath <- getLine 
+
+    saveModelToJSON modelName modelPath
 
 -- Submenu for reusing models
 reusingPreviousModelSubmenu :: IO ()
@@ -172,7 +179,7 @@ reusingPreviousModelSubmenu = do
             printModels models
             putStrLn "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
             putStr "\nEnter the name of the model you want to reuse: "
-            hFlush stdout
+            flushOutput
             modelName <- getLine
             case Map.lookup modelName models of
                 Just csvPath -> do
