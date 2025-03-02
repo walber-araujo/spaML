@@ -64,7 +64,7 @@ accuracyRecursion [] = putStrLn ("The default model accuracy is calculated by tr
 accuracyRecursion (h:t) = do
                           accuracyRecursion t
                           accuracy <- showAccuracy (snd h)
-                          printf "| %-29s | %-20.2f | %-19s |\n" (dropExtension (takeFileName (snd h))) accuracy (modelClassification accuracy)
+                          printf "| %-29s | %-20.2f | %-19s |\n" (fst h) accuracy (modelClassification accuracy)
 
 -- Através do path que contém os modelos de treinamento apresenta a acurácia de cada um
 accuracyCSVs :: FilePath -> IO()
