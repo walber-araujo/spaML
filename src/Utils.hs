@@ -16,6 +16,7 @@ import qualified Data.Map as Map
 import qualified Data.Aeson as Aeson
 import System.IO (withFile, IOMode(..), appendFile)
 import System.Directory (doesFileExist)
+import Data.List (isSuffixOf)
 
 -- Defina uma estrutura de dados para as linhas do CSV
 data MyRecord = MyRecord
@@ -85,3 +86,9 @@ saveModelToJSON modelName filePath = do
     BL.writeFile jsonPath (Aeson.encode updatedModels)
     
     putStrLn "\n✅ Model saved successfully!"
+
+ensureCSVExtension :: String -> String
+ensureCSVExtension fileName =
+    if ".csv" `isSuffixOf` fileName
+        then fileName
+        else fileName ++ ".csv"
