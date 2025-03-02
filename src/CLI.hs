@@ -11,6 +11,7 @@ import Metric
 import Intro
 import Control.Monad (forever)
 import System.Exit (exitSuccess)
+import System.Directory (doesFileExist)
 
 -- Menu interativo
 menu :: IO ()
@@ -50,8 +51,7 @@ processOption option = case option of
 
         putStr "Enter the file name: "
         flushOutput
-        fileName <- getLine 
-        let filePath = "./data/train_data/" ++ fileName
+        filePath <- getCSVFilePath
 
         clearTerminal 
         trainingManualSubmenu filePath
@@ -81,6 +81,13 @@ processOption option = case option of
         putStrLn "\nInvalid option. Please try again.\n"
         menu
 
+getCSVFilePath :: IO FilePath
+getCSVFilePath = do
+    fileName <- getLine
+    let fileNameWithExtension = ensureCSVExtension fileName
+    let filePath = "./data/train_data/" ++ fileNameWithExtension
+    return filePath
+
 -- Submenu para classificação de mensagens individuais
 classificationSubmenu :: Map.Map String Double -> Map.Map String Double -> IO ()
 classificationSubmenu hamProbs spamProbs = do
@@ -109,13 +116,15 @@ classificationSubmenu hamProbs spamProbs = do
 
 trainingManualLoop :: FilePath -> IO ()
 trainingManualLoop filePath = do
-    putStrLn "Enter spam messages first. Type 'exit' to move to ham messages."
+    putStrLn "Enter spam messages first. Type 'exit' to move to ham messages.\n"
     collectMessages "spam" 
-    putStrLn "Now enter ham messages. Type 'exit' to stop."
+
+    clearTerminal
+    putStrLn "Now enter ham messages. Type 'exit' to stop.\n"
     collectMessages "ham"  
   where
     collectMessages classification = do
-        putStr "\nEnter a message (or 'exit' to stop): "
+        putStr $ "Enter a " ++ classification ++ " message (or 'exit' to stop): "
         flushOutput
         message <- getLine
 
@@ -124,6 +133,7 @@ trainingManualLoop filePath = do
             else do
                 saveToCSV filePath classification message
                 collectMessages classification  
+                clearTerminal
 
 trainingManualSubmenu :: FilePath -> IO ()
 trainingManualSubmenu filePath = do
@@ -131,6 +141,7 @@ trainingManualSubmenu filePath = do
     
     trainingManualLoop filePath  
 
+    clearTerminal
     putStr "\nEnter a name for this model: "
     flushOutput
     modelName <- getLine
@@ -178,19 +189,33 @@ reusingPreviousModelSubmenu = do
             putStrLn "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
             printModels models
             putStrLn "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-            putStr "\nEnter the name of the model you want to reuse: "
+            putStr "\nEnter the name of the model you want to reuse (or 'exit' to quit): "
             flushOutput
             modelName <- getLine
-            case Map.lookup modelName models of
-                Just csvPath -> do
-                    putStrLn "\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-                    putStrLn $ "  Training with model: " ++ modelName
-                    putStrLn "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-                    (hamProbs, spamProbs) <- trainModelCSV csvPath
-                    classificationSubmenu hamProbs spamProbs
-
+            if modelName == "exit"
+                then do
                     clearTerminal
                     menu
-                Nothing -> do
-                    putStrLn "\n⚠️  Model not found. Please try again."
-                    reusingPreviousModelSubmenu
+                else case Map.lookup modelName models of
+                    Just csvPath -> do
+                        fileExists <- doesFileExist csvPath
+                        if fileExists
+                            then do
+                                putStrLn "\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+                                putStrLn $ "  Training with model: " ++ modelName
+                                putStrLn "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+                                (hamProbs, spamProbs) <- trainModelCSV csvPath
+                                classificationSubmenu hamProbs spamProbs
+
+                                clearTerminal
+                                menu
+                            else do
+                                clearTerminal
+                                putStrLn $ "\n⚠️  CSV file " ++ csvPath ++ " not found. Please check the file path."
+                                reusingPreviousModelSubmenu
+
+                    Nothing -> do
+                        clearTerminal
+                        putStrLn $ "\n⚠️  Model " ++ modelName ++ " not found. Please try again."
+                        reusingPreviousModelSubmenu
+
