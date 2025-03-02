@@ -56,7 +56,7 @@ processOption option = case option of
         clearTerminal
         putStrLn "Training model manually...\n"
 
-        putStr "Enter the file name: "
+        putStr "Enter the file name (type with .csv): "
         hFlush stdout
         fileName <- getLine 
         let filePath = "./data/train_data/" ++ fileName
@@ -116,19 +116,26 @@ classificationSubmenu hamProbs spamProbs = do
 
 trainingManualLoop :: FilePath -> IO ()
 trainingManualLoop filePath = do
-    putStr "Enter the classification of the message (spam or ham) or 'exit' to stop: "
-    hFlush stdout
-    classification <- getLine 
+    saveToCSV filePath "Label" "Message"
 
-    if classification == "exit"
-        then return ()  
-        else do
-            putStr "\nEnter the message: "
-            hFlush stdout
-            message <- getLine  
+    putStrLn "First, enter the spam messages: "
 
-            saveToCSV filePath classification message  
-            trainingManualLoop filePath  
+    saveMessagesTraining filePath "spam"
+
+    putStrLn "\nNow, enter the ham messages: "
+
+    saveMessagesTraining filePath "ham"
+
+saveMessagesTraining :: FilePath -> String -> IO()   
+saveMessagesTraining filePath classification = do
+               putStr "Enter the message (or 'exit'): "
+               hFlush stdout
+               message <- getLine
+
+               if message == "exit" then return ()
+               else do
+                    saveToCSV filePath classification message
+                    saveMessagesTraining filePath classification
 
 trainingManualSubmenu :: FilePath -> IO ()
 trainingManualSubmenu filePath = do

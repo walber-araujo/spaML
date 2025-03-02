@@ -38,7 +38,7 @@ trainModelCSV filePath = do
 
         Right rgs -> do
             -- Dividir o dataset em treino e teste
-            let (trainSet, testSet) = divideDataset rgs
+            (trainSet, testSet) <- divideCsvTrainingTest filePath rgs
 
             -- Treinar o modelo
             let (hamProbs, spamProbs, _, _) = trainModel trainSet
