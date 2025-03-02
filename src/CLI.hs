@@ -109,19 +109,21 @@ classificationSubmenu hamProbs spamProbs = do
 
 trainingManualLoop :: FilePath -> IO ()
 trainingManualLoop filePath = do
-    putStr "Enter the classification of the message (spam or ham) or 'exit' to stop: "
-    flushOutput
-    classification <- getLine 
+    putStrLn "Enter spam messages first. Type 'exit' to move to ham messages."
+    collectMessages "spam" 
+    putStrLn "Now enter ham messages. Type 'exit' to stop."
+    collectMessages "ham"  
+  where
+    collectMessages classification = do
+        putStr "\nEnter a message (or 'exit' to stop): "
+        flushOutput
+        message <- getLine
 
-    if classification == "exit"
-        then return ()  
-        else do
-            putStr "\nEnter the message: "
-            flushOutput
-            message <- getLine  
-
-            saveToCSV filePath classification message  
-            trainingManualLoop filePath  
+        if message == "exit"
+            then return ()
+            else do
+                saveToCSV filePath classification message
+                collectMessages classification  
 
 trainingManualSubmenu :: FilePath -> IO ()
 trainingManualSubmenu filePath = do

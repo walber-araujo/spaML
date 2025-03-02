@@ -46,8 +46,8 @@ clearTerminal = do
     let command = if os == "mingw32" then "cls" else "clear"
     callCommand command
 
-flushOutput :: IO()
-flushOutput = hflush stdout
+flushOutput :: IO ()
+flushOutput = hFlush stdout
 
 saveToCSV :: FilePath -> String -> String -> IO()
 saveToCSV fileName classification message = do
