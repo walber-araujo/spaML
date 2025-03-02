@@ -41,14 +41,9 @@ showAccuracy filePath = do
 
             return (fromIntegral (truncate (accuracy * 10000)) / 100)
 
--- Encontra caminhos dos arquivos CSVs para calcular acurácia
-findCSVsPaths :: FilePath -> IO [FilePath]
-findCSVsPaths folder = do
-                  arquivos <- listDirectory folder
-                  return [folder </> arq | arq <- arquivos, takeExtension arq == ".csv"]
 
 --Realiza recursão para mostrar a acurácia de cada modelo em Data
-accuracyRecursion :: [FilePath] -> IO()
+accuracyRecursion :: [(String, FilePath)] -> IO()
 accuracyRecursion [] = putStrLn ("The default model accuracy is calculated by training the model, " ++
                       "where 30% of the data from the file is used for training, and 70% is reserved for testing. " ++
                       "When is used other model criated by the user are used 100% of the new data to training and 100% of default file to testing. " ++
@@ -68,16 +63,19 @@ accuracyRecursion [] = putStrLn ("The default model accuracy is calculated by tr
 
 accuracyRecursion (h:t) = do
                           accuracyRecursion t
-                          accuracy <- showAccuracy h
-                          printf "| %-29s | %-20.2f | %-19s |\n" (dropExtension (takeFileName h)) accuracy (modelClassification accuracy)
+                          accuracy <- showAccuracy (snd h)
+                          printf "| %-29s | %-20.2f | %-19s |\n" (dropExtension (takeFileName (snd h))) accuracy (modelClassification accuracy)
 
 -- Através do path que contém os modelos de treinamento apresenta a acurácia de cada um
 accuracyCSVs :: FilePath -> IO()
 accuracyCSVs filePath = do
-            
-            files <- findCSVsPaths filePath
+            let jsonPath = "./data/models/models.json" 
 
-            accuracyRecursion files
+            modelMap <- loadModelMap jsonPath
+
+            let listaModel = Map.toList modelMap  -- Converte para [(Key, Value)]
+
+            accuracyRecursion listaModel
 
 -- Intervalos de classficação do modelo
 modelClassification :: Double -> String
