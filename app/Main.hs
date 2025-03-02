@@ -7,7 +7,7 @@ import Intro
 main :: IO ()
 main = do
     clearTerminal
-    showIntro
+    --showIntro
     clearTerminal
     putStrLn "Welcome to spaML!"
     putStrLn "This project performs spam detection using Machine Learning with the Naive Bayes algorithm."

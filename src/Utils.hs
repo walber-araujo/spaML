@@ -10,6 +10,7 @@ import qualified Data.ByteString.Lazy as BL
 import qualified Data.Vector as V
 import GHC.Generics
 import System.Info (os)
+import System.IO (hFlush, stdout)
 import System.Process (callCommand)
 import qualified Data.Map as Map
 import qualified Data.Aeson as Aeson
@@ -44,6 +45,9 @@ clearTerminal :: IO ()
 clearTerminal = do
     let command = if os == "mingw32" then "cls" else "clear"
     callCommand command
+
+flushOutput :: IO()
+flushOutput = hflush stdout
 
 saveToCSV :: FilePath -> String -> String -> IO()
 saveToCSV fileName classification message = do
