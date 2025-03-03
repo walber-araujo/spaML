@@ -40,6 +40,7 @@ jobs:
         ghc --version
         cabal --version
         stack --version
+        cabal update
         cabal install hlint
 
     - name: Build project
