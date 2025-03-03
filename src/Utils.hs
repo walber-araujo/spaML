@@ -10,11 +10,13 @@ import qualified Data.ByteString.Lazy as BL
 import qualified Data.Vector as V
 import GHC.Generics
 import System.Info (os)
+import System.IO (hFlush, stdout)
 import System.Process (callCommand)
 import qualified Data.Map as Map
 import qualified Data.Aeson as Aeson
 import System.IO (withFile, IOMode(..), appendFile)
 import System.Directory (doesFileExist)
+import Data.List (isSuffixOf)
 
 -- Defina uma estrutura de dados para as linhas do CSV
 data MyRecord = MyRecord
@@ -62,6 +64,9 @@ clearTerminal = do
     let command = if os == "mingw32" then "cls" else "clear"
     callCommand command
 
+flushOutput :: IO ()
+flushOutput = hFlush stdout
+
 saveToCSV :: FilePath -> String -> String -> IO()
 saveToCSV fileName classification message = do
   let csvLine = classification ++ "," ++ message ++ "\n"
@@ -98,3 +103,9 @@ saveModelToJSON modelName filePath = do
     BL.writeFile jsonPath (Aeson.encode updatedModels)
     
     putStrLn "\n✅ Model saved successfully!"
+
+ensureCSVExtension :: String -> String
+ensureCSVExtension fileName =
+    if ".csv" `isSuffixOf` fileName
+        then fileName
+        else fileName ++ ".csv"
