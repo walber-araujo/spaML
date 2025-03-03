@@ -58,5 +58,5 @@ jobs:
         curl -L "$HLINT_URL" -o hlint.tar.gz
         mkdir hlint_dir && tar -xzf hlint.tar.gz -C hlint_dir --strip-components=1
         chmod +x hlint_dir/hlint
-        ./hlint_dir/hlint .
+        ./hlint_dir/hlint src test app
   
