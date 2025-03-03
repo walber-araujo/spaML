@@ -48,8 +48,7 @@ processOption option = case option of
     "3" -> do
         clearTerminal
         putStrLn "Training model manually...\n"
-
-        putStr "Enter the file name: "
+        putStr "Enter the file name (type with .csv): "
         flushOutput
         filePath <- getCSVFilePath
 
@@ -116,6 +115,7 @@ classificationSubmenu hamProbs spamProbs = do
 
 trainingManualLoop :: FilePath -> IO ()
 trainingManualLoop filePath = do
+    saveToCSV filePath "Label" "Message"
     putStrLn "Enter spam messages first. Type 'exit' to move to ham messages.\n"
     collectMessages "spam" 
 

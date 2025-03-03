@@ -42,6 +42,23 @@ divideDataset records =
         trainSize = (total * 3) `div` 10 -- 70% para treinamento
     in V.splitAt trainSize records
 
+divideCsvTrainingTest :: FilePath -> V.Vector MyRecord -> IO (V.Vector MyRecord, V.Vector MyRecord)
+divideCsvTrainingTest filePath records = do
+                if filePath == "data/train_data/SMSSpamCollection.csv"
+                then do
+                     return (divideDataset records)
+                else do 
+                     vectorCsvDefault <- downloadDefault
+                     return (records, vectorCsvDefault)
+
+downloadDefault :: IO (V.Vector MyRecord)
+downloadDefault = do
+                    fileCsvDefault <- BL.readFile "data/train_data/SMSSpamCollection.csv"
+                    let registrosDefault = decode HasHeader fileCsvDefault :: Either String (V.Vector MyRecord)
+                    case registrosDefault of
+                        Left err -> return V.empty
+                        Right rgsDefault -> return rgsDefault
+
 clearTerminal :: IO ()
 clearTerminal = do
     let command = if os == "mingw32" then "cls" else "clear"
