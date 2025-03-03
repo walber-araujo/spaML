@@ -42,6 +42,8 @@ processOption option = case option of
     "2" -> do
         clearTerminal
         -- TODO: adicionar texto explicando a função
+        putStrLn "\nAdd a new model by providing a name and selecting a CSV file containing training data."
+        putStrLn "Type a name to your model (or 'exit' to quit).\n"
         addNewModelSubmenu
 
         menu 
@@ -49,15 +51,30 @@ processOption option = case option of
     "3" -> do
         clearTerminal
         putStrLn "Training model manually...\n"
-        putStr "Enter the file name (should end with .csv): "
+        putStr "Enter the file name or type 'exit' to return: "
         flushOutput
-        filePath <- getCSVFilePath
+        modelName <- getLine
 
-        clearTerminal 
-        trainingManualSubmenu filePath
+        if modelName == "exit"
+            then menu
+            else do
+                let fullPath = getCSVFilePath modelName
+                
+                clearTerminal
+                trainingManualSubmenu fullPath modelName
 
-        (hamProbs, spamProbs) <- trainModelCSV filePath
-        menu
+                putStrLn "\nDo you want to save this model? (y/n): "
+                flushOutput
+                confirmation <- getLine
+
+                if confirmation == "y"
+                    then do
+                        saveModelToJSON modelName fullPath
+                        putStrLn "Model saved successfully!"
+                        menu
+                    else do
+                        putStrLn "Model was not saved."
+                        menu
 
     "4" -> do
         clearTerminal
@@ -81,12 +98,8 @@ processOption option = case option of
         putStrLn "\nInvalid option. Please try again.\n"
         menu
 
-getCSVFilePath :: IO FilePath
-getCSVFilePath = do
-    fileName <- getLine
-    let fileNameWithExtension = ensureCSVExtension fileName
-    let filePath = "./data/train_data/" ++ fileNameWithExtension
-    return filePath
+getCSVFilePath :: String -> FilePath
+getCSVFilePath modelName = "./data/train_data/" ++ ensureCSVExtension modelName
 
 -- Submenu para classificação de mensagens individuais
 classificationSubmenu :: Map.Map String Double -> Map.Map String Double -> IO ()
@@ -136,16 +149,13 @@ trainingManualLoop filePath = do
                 collectMessages classification  
                 clearTerminal
 
-trainingManualSubmenu :: FilePath -> IO ()
-trainingManualSubmenu filePath = do
+trainingManualSubmenu :: FilePath -> String-> IO ()
+trainingManualSubmenu filePath  modelName = do
     putStrLn "Training Manual Submenu:\n"
     
     trainingManualLoop filePath  
 
     clearTerminal
-    putStr "\nEnter a name for this model: "
-    flushOutput
-    modelName <- getLine
     saveModelToJSON modelName filePath  
 
     clearTerminal
@@ -183,8 +193,11 @@ addNewModelSubmenu = do
     flushOutput
     modelName <- getLine
 
-    modelPath <- askPath
-    saveModelToJSON modelName modelPath
+    if modelName == "exit"
+        then menu
+        else do
+            modelPath <- askPath
+            saveModelToJSON modelName modelPath
 
 -- Submenu for reusing models
 reusingPreviousModelSubmenu :: IO ()
