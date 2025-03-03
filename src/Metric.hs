@@ -53,7 +53,7 @@ accuracyRecursion [] = putStrLn ("The default model accuracy is calculated by tr
                       "When is used other model criated by the user are used 100% of the new data to training and 100% of default file to testing. " ++
                       "First, the messages are counted and categorized as spam or ham (not spam). " ++
                       "Then, the model calculates the probability of a message being spam or ham. " ++
-                      "Finally, the 30% of the data set aside for testing is processed by the classifier, " ++
+                      "Finally, the data set aside for testing is processed by the classifier, " ++
                       "which determines whether each message is spam or ham. " ++
                       "The model then evaluates whether the classification was correct or not. " ++
                       "The accuracy is calculated as the ratio of correctly classified messages to the total number of test messages.\n" ++
