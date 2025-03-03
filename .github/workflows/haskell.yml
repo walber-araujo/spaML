@@ -12,7 +12,7 @@ permissions:
 jobs:
   build:
     runs-on: ${{ matrix.os }}
-    timeout-minutes: 20  # Aumentado o tempo limite para evitar cancelamento precoce
+    timeout-minutes: 10  # Reduzindo pois a execução será mais rápida
 
     strategy:
       matrix:
@@ -21,22 +21,30 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - name: Cache cabal packages
+      uses: actions/cache@v3
+      with:
+        path: ~/.cabal
+        key: ${{ runner.os }}-cabal-${{ hashFiles('cabal.project') }}
+        restore-keys: |
+          ${{ runner.os }}-cabal-
+
+    - name: Cache stack packages
+      uses: actions/cache@v3
+      with:
+        path: ~/.stack
+        key: ${{ runner.os }}-stack-${{ hashFiles('stack.yaml') }}
+        restore-keys: |
+          ${{ runner.os }}-stack-
+
     - name: Install Haskell Tools (GHC, Cabal, Stack)
       run: |
-        # Para macOS
         if [[ "${{ matrix.os }}" == "macos-latest" ]]; then
-          brew update
-          brew install haskell-stack cabal-install
+          brew update && brew install haskell-stack cabal-install
         else
-          # Para Ubuntu
-          sudo apt-get update
-          sudo apt-get install -y haskell-stack cabal-install
+          sudo apt-get update && sudo apt-get install -y haskell-stack cabal-install
         fi
 
-        # Atualiza o Stack para a versão mais recente
-        stack upgrade --force-download
-
-        # Verificação das versões instaladas (caso o programa não esteja instalado será lançado um erro)
         ghc --version
         cabal --version
         stack --version
@@ -46,5 +54,8 @@ jobs:
     - name: Build project
       run: stack build
 
+    - name: Run HLint
+      run: hlint .
+
     - name: Run tests
-      run: hlint . && stack test
+      run: stack test
