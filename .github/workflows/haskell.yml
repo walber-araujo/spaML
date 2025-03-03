@@ -40,11 +40,9 @@ jobs:
         ghc --version
         cabal --version
         stack --version
-        cabal update
-        cabal install hlint
 
     - name: Build project
       run: stack build
 
     - name: Run tests
-      run: hlint . && stack test
+      run: curl -sSL https://raw.github.com/ndmitchell/hlint/master/misc/run.sh | sh -s . && stack test
