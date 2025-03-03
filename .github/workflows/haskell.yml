@@ -36,10 +36,7 @@ jobs:
         # Atualiza o Stack para a versão mais recente
         stack upgrade --force-download
 
-        # Instala a versão mais recente do GHC
-        stack setup --resolver lts
-
-        # Verificação das versões instaladas
+        # Verificação das versões instaladas (caso o programa não esteja instalado será lançado um erro)
         ghc --version
         cabal --version
         stack --version
@@ -48,4 +45,4 @@ jobs:
       run: stack build
 
     - name: Run tests
-      run: stack test
+      run: hlint . && stack test

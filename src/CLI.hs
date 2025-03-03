@@ -41,6 +41,7 @@ processOption option = case option of
 
     "2" -> do
         clearTerminal
+        -- TODO: adicionar texto explicando a função
         addNewModelSubmenu
 
         menu 
@@ -48,7 +49,7 @@ processOption option = case option of
     "3" -> do
         clearTerminal
         putStrLn "Training model manually...\n"
-        putStr "Enter the file name (type with .csv): "
+        putStr "Enter the file name (should end with .csv): "
         flushOutput
         filePath <- getCSVFilePath
 
@@ -165,16 +166,24 @@ loop hamProbs spamProbs = do
             putStrLn $ "The message has been classified as: " ++ if result == 0 then "ham" else "spam"
             loop hamProbs spamProbs
 
+askPath :: IO String
+askPath = do
+    putStr "Enter the model path: "
+    flushOutput
+    modelPath <- getLine
+    fileExists <- doesFileExist modelPath
+    if not fileExists then do
+        putStrLn $ "\n⚠️  Model path \"" ++ modelPath ++ "\" not found. Please try again."
+        askPath
+    else return modelPath
+
 addNewModelSubmenu :: IO()
 addNewModelSubmenu = do
     putStr "Enter the new model name: "
     flushOutput
     modelName <- getLine
 
-    putStr "Enter the model path: "
-    flushOutput
-    modelPath <- getLine 
-
+    modelPath <- askPath
     saveModelToJSON modelName modelPath
 
 -- Submenu for reusing models
