@@ -11,7 +11,7 @@ import Metric
 import Intro
 import Control.Monad (forever)
 import System.Exit (exitSuccess)
-import System.Directory (doesFileExist)
+import System.Directory (doesFileExist, removeFile)
 
 -- Menu interativo
 menu :: IO ()
@@ -41,7 +41,6 @@ processOption option = case option of
 
     "2" -> do
         clearTerminal
-        -- TODO: adicionar texto explicando a função
         putStrLn "\nAdd a new model by providing a name and selecting a CSV file containing training data."
         putStrLn "Type a name to your model (or 'exit' to quit).\n"
         addNewModelSubmenu
@@ -62,19 +61,6 @@ processOption option = case option of
                 
                 clearTerminal
                 trainingManualSubmenu fullPath modelName
-
-                putStrLn "\nDo you want to save this model? (y/n): "
-                flushOutput
-                confirmation <- getLine
-
-                if confirmation == "y"
-                    then do
-                        saveModelToJSON modelName fullPath
-                        putStrLn "Model saved successfully!"
-                        menu
-                    else do
-                        putStrLn "Model was not saved."
-                        menu
 
     "4" -> do
         clearTerminal
@@ -149,17 +135,29 @@ trainingManualLoop filePath = do
                 collectMessages classification  
                 clearTerminal
 
-trainingManualSubmenu :: FilePath -> String-> IO ()
-trainingManualSubmenu filePath  modelName = do
+trainingManualSubmenu :: FilePath -> String -> IO ()
+trainingManualSubmenu filePath modelName = do
     putStrLn "Training Manual Submenu:\n"
     
-    trainingManualLoop filePath  
+    trainingManualLoop filePath  -- Coleta as mensagens (spam e ham)
 
     clearTerminal
-    saveModelToJSON modelName filePath  
+    putStrLn "\nDo you want to save this model? (y/n): "
+    flushOutput
+    confirmation <- getLine
 
-    clearTerminal
-    putStrLn "Training manual completed and model saved.\n"
+    if confirmation == "y"
+        then do
+            saveModelToJSON modelName filePath
+            clearTerminal
+            putStrLn "Model saved successfully."
+            menu
+        else do
+            -- Se o usuário não confirmar, removemos o arquivo CSV
+            removeFile filePath
+            clearTerminal
+            putStrLn "Model was not saved and the data file has been removed."
+            menu
 
 -- Função para loop de entrada do usuário
 loop :: Map.Map String Double -> Map.Map String Double -> IO ()
