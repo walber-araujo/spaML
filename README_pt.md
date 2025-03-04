@@ -57,9 +57,18 @@ stack build
 
 
 3️⃣ Execute:
-sh
-stack run
 
+Linux/MacOS:
+
+```sh
+stack run
+```
+
+Windows:
+
+```sh
+stack run -- +RTS --io-manager=native
+```
 
 ---
 
