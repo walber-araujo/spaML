@@ -4,6 +4,8 @@ module CLI where
 
 import qualified Data.Map as Map
 import qualified Data.ByteString.Lazy as B
+import qualified Data.ByteString.Lazy as BL
+import qualified Data.Aeson as Aeson
 import Training
 import Classifier
 import Utils
@@ -19,13 +21,14 @@ menu = do
     clearTerminal
     putStrLn "\n=========================================="
     putStrLn "Menu Options:\n"
-    putStrLn "1. Reuse previous models"
-    putStrLn "2. Add new model"
-    putStrLn "3. Train model manually"
-    putStrLn "4. Classify individual messages using the default model"
-    putStrLn "5. Show results with accuracy rates"
-    putStrLn "6. Exit"
-    putStr "\nChoose an option (1-6): "
+    putStrLn "1. Reuse previous models."
+    putStrLn "2. Add new model."
+    putStrLn "3. Remove a model."
+    putStrLn "4. Train model manually."
+    putStrLn "5. Classify individual messages using the default model."
+    putStrLn "6. Show results with accuracy rates."
+    putStrLn "7. Exit."
+    putStr "\nChoose an option (1-7): "
     flushOutput
 
     option <- getLine
@@ -45,9 +48,14 @@ processOption option = case option of
         putStrLn "Type a name to your model (or 'exit' to quit).\n"
         addNewModelSubmenu
 
-        menu 
-
+        menu
+    
     "3" -> do
+        clearTerminal
+        removeModelSubmenu
+        menu
+
+    "4" -> do
         clearTerminal
         putStrLn "Training model manually...\n"
         putStr "Enter the file name or type 'exit' to return: "
@@ -62,20 +70,20 @@ processOption option = case option of
                 clearTerminal
                 trainingManualSubmenu fullPath modelName
 
-    "4" -> do
+    "5" -> do
         clearTerminal
         putStrLn "\nClassifying individual messages...\n"
         (hamProbs, spamProbs) <- trainModelCSV "data/train_data/SMSSpamCollection.csv" 
         classificationSubmenu hamProbs spamProbs
 
-    "5" -> do
+    "6" -> do
         clearTerminal
         putStrLn "\nShowing results with accuracy rates...\n"
         accuracyCSVs "data/train_data"
         waitForAnyKey
         menu
 
-    "6" -> do
+    "7" -> do
         showOut
         exitSuccess
 
@@ -244,3 +252,36 @@ reusingPreviousModelSubmenu = do
                         putStrLn $ "\n⚠️  Model " ++ modelName ++ " not found. Please try again."
                         reusingPreviousModelSubmenu
 
+removeModelSubmenu :: IO ()
+removeModelSubmenu = do
+    let jsonPath = "./data/models/models.json"
+    modelMap <- loadModelMap jsonPath
+    if Map.null modelMap
+        then do
+            putStrLn "\nNo models found to remove."
+            waitForAnyKey
+        else do
+            putStrLn "\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            putStrLn "       Available Models       "
+            putStrLn "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            printModels modelMap
+            putStrLn "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            putStr "\nEnter the name of the model to remove (or 'exit' to cancel): "
+            flushOutput
+            modelName <- getLine
+
+            if modelName == "exit" then
+                return ()
+            else if modelName `elem` ["modelo1", "modelo2"] then do
+                putStrLn $ "\n⚠️  Model '" ++ modelName ++ "' cannot be removed."
+                waitForAnyKey
+                removeModelSubmenu
+            else case Map.lookup modelName modelMap of
+                Just _ -> do
+                    let updatedModels = Map.delete modelName modelMap
+                    BL.writeFile jsonPath (Aeson.encode updatedModels)
+                    putStrLn $ "\nModel '" ++ modelName ++ "' removed successfully!"
+                    waitForAnyKey
+                Nothing -> do
+                    putStrLn $ "\nModel '" ++ modelName ++ "' not found. Please try again."
+                    removeModelSubmenu
