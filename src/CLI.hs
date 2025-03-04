@@ -176,14 +176,18 @@ loop hamProbs spamProbs = do
 
 askPath :: IO String
 askPath = do
-    putStr "Enter the model path: "
+    putStr "Enter the model path (or 'exit' to quit): "
     flushOutput
     modelPath <- getLine
     fileExists <- doesFileExist modelPath
-    if not fileExists then do
-        putStrLn $ "\n⚠️  Model path \"" ++ modelPath ++ "\" not found. Please try again."
-        askPath
-    else return modelPath
+    if modelPath == "exit" 
+        then return "unknown"
+    else do 
+        if not fileExists then do
+            clearTerminal
+            putStrLn $ "\n⚠️  Model path \"" ++ modelPath ++ "\" not found. Please try again."
+            askPath
+        else return modelPath
 
 addNewModelSubmenu :: IO()
 addNewModelSubmenu = do
@@ -195,7 +199,8 @@ addNewModelSubmenu = do
         then menu
         else do
             modelPath <- askPath
-            saveModelToJSON modelName modelPath
+            if modelPath == "unknown" then return()
+            else saveModelToJSON modelName modelPath
 
 -- Submenu for reusing models
 reusingPreviousModelSubmenu :: IO ()
