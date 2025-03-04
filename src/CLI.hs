@@ -273,7 +273,7 @@ removeModelSubmenu = do
             if modelName == "exit" then
                 return ()
             else if modelName `elem` ["modelo1", "modelo2"] then do
-                putStrLn $ "\n⚠️  Model '" ++ modelName ++ "' cannot be removed."
+                putStrLn $ "\n⚠️  Model '" ++ modelName ++ "' cannot be removed as it is default model of the system."
                 waitForAnyKey
                 removeModelSubmenu
             else case Map.lookup modelName modelMap of
