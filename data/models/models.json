@@ -1,4 +1,1 @@
-{
-    "modelo1": "./data/train_data/SMSSpamCollection.csv",
-    "modelo2": "./data/train_data/short_messages_formatted.csv"
-}
+{"modelo1":"./data/train_data/SMSSpamCollection.csv","modelo2":"./data/train_data/short_messages_formatted.csv"}

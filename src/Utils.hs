@@ -10,11 +10,10 @@ import qualified Data.ByteString.Lazy as BL
 import qualified Data.Vector as V
 import GHC.Generics
 import System.Info (os)
-import System.IO (hFlush, stdout)
+import System.IO (hFlush, stdout, withFile, IOMode(..), appendFile)
 import System.Process (callCommand)
 import qualified Data.Map as Map
 import qualified Data.Aeson as Aeson
-import System.IO (withFile, IOMode(..), appendFile)
 import System.Directory (doesFileExist)
 import Data.List (isSuffixOf)
 
