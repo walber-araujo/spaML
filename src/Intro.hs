@@ -8,8 +8,9 @@ Stability   : stable
 
 import System.IO (hFlush, stdout, hSetBuffering, stdin, BufferMode(NoBuffering, LineBuffering), hReady)
 import Control.Concurrent (threadDelay)
-import Control.Monad (unless, void)
+import Control.Monad (when, void)
 import Utils (clearTerminal)
+
 
 {-|
     Simulates a typing effect by printing each character with a small delay.
@@ -21,17 +22,31 @@ import Utils (clearTerminal)
     Return:
       - `IO ()` : Action that produces the typing effect.
 -}
-typeWriter :: String -> IO ()
-typeWriter [] = return ()
-typeWriter (c:cs) = do
-    putChar c
+typeWriter' :: String -> IO ()
+typeWriter' [] = return ()
+typeWriter' (c:cs) = do
     hasInput <- hReady stdin
     if hasInput
         then return ()
     else do
+        putChar c
         hFlush stdout
-        threadDelay 24000  -- Tempo de atraso em microssegundos (40ms por caractere)
-        typeWriter cs
+        threadDelay 24000  -- Tempo de atraso em microssegundos (24ms por caractere)
+        typeWriter' cs
+
+-- retorna verdadeiro caso não tenha sido pressionada nenhuma tecla durante a animação
+typeWriter :: String -> IO Bool
+typeWriter s = do
+    hSetBuffering stdin NoBuffering
+    typeWriter' s
+    hasInput <- hReady stdin
+    hSetBuffering stdin LineBuffering
+    if hasInput then do
+        getChar
+        clearTerminal
+        return False
+    else
+        return True
 
 {-|
     Displays the system's logo with an animated typing effect. 
@@ -56,14 +71,10 @@ animatedLogo = do
         loop :: [String] -> IO ()
         loop [] = return ()
         loop (line:left) = do
-            typeWriter (line ++ "\n")
-            hasInput <- hReady stdin
-            if hasInput then do -- lê o caractere inserido e limpa o terminal
-                void getChar
-                clearTerminal
-            else do
-                threadDelay 100000 -- 200ms entre cada linha
-                loop left
+            b <- typeWriter (line ++ "\n")
+            when b (do
+                threadDelay 100000 -- 100ms entre cada linha
+                loop left)
 
 {-|
     Waits for the user to press any key to continue. The input is not buffered, and the program will proceed
@@ -93,9 +104,7 @@ waitForAnyKey = do
 showIntro :: IO ()
 showIntro = do
     putStrLn "\n"
-    hSetBuffering stdin NoBuffering
     animatedLogo  -- Exibe o nome do software com animação
-    hSetBuffering stdin LineBuffering
     putStrLn "\n=========================================="
     typeWriter "       Welcome to S P A M L Classifier    \n"
     putStrLn "=========================================="
@@ -116,3 +125,4 @@ showOut = do
     typeWriter "   Thank you for using S P A M L!   \n"
     putStrLn "=========================================="
     typeWriter "\nGoodbye!\n"
+    return ()
