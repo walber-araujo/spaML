@@ -68,7 +68,7 @@ readCSV filePath = do
 divideDataset :: V.Vector MyRecord -> (V.Vector MyRecord, V.Vector MyRecord)
 divideDataset records = 
     let total = V.length records
-        trainSize = (total * 3) `div` 10 -- 70% para treinamento
+        trainSize = (total * 3) `div` 10 -- 70% to training
     in V.splitAt trainSize records
 
 {-|
@@ -160,24 +160,42 @@ loadModelMap path = do
                 Nothing     -> return Map.empty  -- Retorna um mapa vazio se o JSON for inválido
         else return Map.empty
 
--- Exibir modelos disponíveis
+{- |
+    Show the availabels models.
+    Parameters:
+        - 'ModelMap': Map with the models names.
+    Return:
+        - 'IO ()': Show availabels models
+-}
 printModels :: ModelMap -> IO ()
 printModels models = do
     mapM_ putStrLn (Map.keys models)
 
--- Função para atualizar e salvar a lista de modelos
+{- |
+    Update and save the models list.
+    Parameters:
+        - 'String': Models name.
+        - 'FilePath': path of model.
+    Return:
+        - 'IO ()': message showing that model has been saved.
+-}
 saveModelToJSON :: String -> FilePath -> IO ()
 saveModelToJSON modelName filePath = do
     let jsonPath = "./data/models/models.json"
 
-    -- Tenta carregar o arquivo de modelos
     existingModels <- loadModelMap jsonPath
     let updatedModels = Map.insert modelName filePath existingModels
     BL.writeFile jsonPath (Aeson.encode updatedModels)
     
     putStrLn "\n✅ Model saved successfully!"
 
--- Função que garante que o arquivo possui o sufixo .csv
+{- |
+    Ensure that the csv file has the suffix .csv.
+    Parameters:
+        - 'String': file name.
+    Return:
+        - 'String': the file name with .csv
+-}
 ensureCSVExtension :: String -> String
 ensureCSVExtension fileName =
     if ".csv" `isSuffixOf` fileName

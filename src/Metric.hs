@@ -1,6 +1,10 @@
 module Metric where
 
--- Treina o modelo para apresentar sua acurácia
+{-
+Module      : Metric
+Description : Train the models to show their accuracy.
+Stability   : stable.
+-}
 
 import qualified Data.Vector as V
 import qualified Data.Map as Map
@@ -14,7 +18,13 @@ import ModelTest
 import Utils
 import Training
 
--- Calcula a acurácia do modelo passado
+{- |
+    Calculate the model accuracy.
+    Parameters:
+        - 'FilePath': path of file.
+    Return:
+        - 'IO Double': value of accuracy.
+-}
 showAccuracy :: FilePath -> IO Double
 showAccuracy filePath = do
 
@@ -24,29 +34,31 @@ showAccuracy filePath = do
     else do
         fileCsv <- BL.readFile filePath
 
-    -- Decodifica os arquivos CSV
         let registros = decode HasHeader fileCsv :: Either String (V.Vector MyRecord)
 
         case registros of
             Left err -> do
                 putStrLn $ "Error reading the CSV: " ++ err
-                return 0.0 -- Retorno padrão em caso de erro
+                return 0.0
 
             Right rgs -> do
-            -- Dividir o dataset em treino e teste
             
                 (trainSet, testSet) <- divideCsvTrainingTest filePath rgs
 
-            -- Treinar o modelo
                 let (hamProbs, spamProbs, _, _) = trainModel trainSet
 
-            -- Calcular a acurácia no conjunto de teste
                 accuracy <- testModel testSet hamProbs spamProbs         
 
                 return (fromIntegral (truncate (accuracy * 10000)) / 100)
 
-
---Realiza recursão para mostrar a acurácia de cada modelo em Data
+{- |
+    Performs recursion to show the accuracy of each model.
+    Parameters:
+        - '[(String, FilePath)]': A vector of map with the key (model name) and value (path of file). 
+    Return:
+        - 'IO()': a little explanation of the algorithm calculation and a table with name, accuracy and
+        classification of each model.
+-}
 accuracyRecursion :: [(String, FilePath)] -> IO()
 accuracyRecursion [] = putStrLn ("The default model accuracy is calculated by training the model, " ++
                       "where 30% of the data from the file is used for training, and 70% is reserved for testing. " ++
@@ -71,18 +83,30 @@ accuracyRecursion (h:t) = do
                           if accuracy == (-1.0) then printf "| %-30s | %-42s |\n" (fst h) "File path not found"
                           else printf "| %-30s | %-21.2f | %-18s |\n" (fst h) accuracy (modelClassification accuracy)
 
--- Através do path que contém os modelos de treinamento apresenta a acurácia de cada um
+{- |
+    Downloads the list of JSON templates to calculate precision in precisionRecursion.
+    Parameters:
+        - 'FilePath': Path with the paths and names of the data files. 
+    Return:
+        - 'IO()': the return of accuracyRecursion.
+-}
 accuracyCSVs :: FilePath -> IO()
 accuracyCSVs filePath = do
             let jsonPath = "./data/models/models.json" 
 
             modelMap <- loadModelMap jsonPath
 
-            let listaModel = Map.toList modelMap  -- Converte para [(Key, Value)]
+            let listaModel = Map.toList modelMap
 
             accuracyRecursion listaModel
 
--- Intervalos de classficação do modelo
+{- |
+    Ranges with each accuracy rating.
+    Parameters:
+        - 'Double': Value of accuracy. 
+    Return:
+        - 'String': the classification according to accuracy.
+-}
 modelClassification :: Double -> String
 modelClassification value
                     | value < 65.0 = "Bad"
