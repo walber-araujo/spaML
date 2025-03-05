@@ -41,6 +41,7 @@ divideDataset records =
         trainSize = (total * 3) `div` 10 -- 70% para treinamento
     in V.splitAt trainSize records
 
+-- Se o arquivo for o padrão, divide os registros; caso contrário, usa um conjunto padrão como teste.
 divideCsvTrainingTest :: FilePath -> V.Vector MyRecord -> IO (V.Vector MyRecord, V.Vector MyRecord)
 divideCsvTrainingTest filePath records = do
                 if filePath == "data/train_data/SMSSpamCollection.csv"
@@ -50,6 +51,7 @@ divideCsvTrainingTest filePath records = do
                      vectorCsvDefault <- downloadDefault
                      return (records, vectorCsvDefault)
 
+-- Lê o conjunto de dados padrão e o retorna, ou um vetor vazio em caso de erro.
 downloadDefault :: IO (V.Vector MyRecord)
 downloadDefault = do
                     fileCsvDefault <- BL.readFile "data/train_data/SMSSpamCollection.csv"
@@ -58,14 +60,17 @@ downloadDefault = do
                         Left err -> return V.empty
                         Right rgsDefault -> return rgsDefault
 
+-- Função para fazer a limpeza do terminal
 clearTerminal :: IO ()
 clearTerminal = do
     let command = if os == "mingw32" then "cls" else "clear"
     callCommand command
 
+-- Função para limpar buffer de entrada
 flushOutput :: IO ()
 flushOutput = hFlush stdout
 
+-- Função que salva uma mensagem juntamente com sua classificação no CSV
 saveToCSV :: FilePath -> String -> String -> IO()
 saveToCSV fileName classification message = do
   let csvLine = classification ++ "," ++ message ++ "\n"
@@ -103,6 +108,7 @@ saveModelToJSON modelName filePath = do
     
     putStrLn "\n✅ Model saved successfully!"
 
+-- Função que garante que o arquivo possui o sufixo .csv
 ensureCSVExtension :: String -> String
 ensureCSVExtension fileName =
     if ".csv" `isSuffixOf` fileName
