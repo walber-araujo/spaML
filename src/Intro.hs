@@ -1,11 +1,26 @@
 module Intro where
 
+{-|
+Module      : Intro
+Description : Provides animated intro and outro with typing effect for the SPA ML Classifier program.
+Stability   : stable
+-}
+
 import System.IO (hFlush, stdout, hSetBuffering, stdin, BufferMode(NoBuffering, LineBuffering), hReady)
 import Control.Concurrent (threadDelay)
 import Control.Monad (unless, void)
 import Utils (clearTerminal)
 
--- Função que exibe um texto com efeito de digitação
+{-|
+    Simulates a typing effect by printing each character with a small delay.
+    The typing stops if the user presses any key, otherwise it continues to display the string.
+
+    Parameters:
+      - `msg` : The string to be displayed with the typing effect.
+
+    Return:
+      - `IO ()` : Action that produces the typing effect.
+-}
 typeWriter :: String -> IO ()
 typeWriter [] = return ()
 typeWriter (c:cs) = do
@@ -18,7 +33,14 @@ typeWriter (c:cs) = do
         threadDelay 24000  -- Tempo de atraso em microssegundos (40ms por caractere)
         typeWriter cs
 
--- Exibe cada linha do logo de forma animada
+{-|
+    Displays the system's logo with an animated typing effect. 
+    Each line of the logo is displayed one by one, with a delay in between.
+    The user can interrupt the animation by pressing any key, which will clear the terminal.
+
+    Return:
+      - `IO ()` : Action that displays the animated logo.
+-}
 animatedLogo :: IO ()
 animatedLogo = do
     let logo =
@@ -43,7 +65,13 @@ animatedLogo = do
                 threadDelay 100000 -- 200ms entre cada linha
                 loop left
 
--- Aguarda qualquer tecla pressionada para continuar
+{-|
+    Waits for the user to press any key to continue. The input is not buffered, and the program will proceed
+    as soon as any key is pressed.
+
+    Return:
+      - `IO ()` : Action that waits for the user to press a key.
+-}
 waitForAnyKey :: IO ()
 waitForAnyKey = do
     hSetBuffering stdin NoBuffering  -- Desativa o buffer da entrada padrão
@@ -54,7 +82,14 @@ waitForAnyKey = do
     hSetBuffering stdin LineBuffering
     return ()
 
--- Exibe uma introdução animada ao sistema antes do menu principal
+{-|
+    Displays the introductory animation with the system's logo and a welcome message.
+    After the animation, it shows a brief description of the program's functionality
+    and waits for the user to press any key before proceeding.
+
+    Return:
+      - `IO ()` : Action that shows the introduction and waits for user input.
+-}
 showIntro :: IO ()
 showIntro = do
     putStrLn "\n"
@@ -68,7 +103,13 @@ showIntro = do
     typeWriter "You can train a model, classify messages, and check accuracy results.\n"
     waitForAnyKey
 
--- Exibe uma mensagem final ao sair do sistema com efeito de digitação
+{-|
+    Displays a final message with a typing effect when the user exits the program.
+    The message expresses gratitude and bids farewell to the user.
+
+    Return:
+      - `IO ()` : Action that shows the final message before exiting.
+-}
 showOut :: IO ()
 showOut = do
     putStrLn "\n=========================================="
