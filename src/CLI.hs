@@ -28,15 +28,15 @@ import System.Directory (doesFileExist, removeFile)
 menu :: IO ()
 menu = do
     clearTerminal
-    putStrLn "\n=========================================="
+    putStrLn "\n===================================================================================="
     putStrLn "Menu Options:\n"
-    putStrLn "1. Reuse previous models."
-    putStrLn "2. Add new model."
-    putStrLn "3. Remove a model."
-    putStrLn "4. Train model manually."
-    putStrLn "5. Classify individual messages using the default model."
-    putStrLn "6. Show results with accuracy rates."
-    putStrLn "7. Exit."
+    putStrLn "[1]. Reuse previous models."
+    putStrLn "[2]. Add new model."
+    putStrLn "[3]. Remove a model."
+    putStrLn "[4]. Train model manually."
+    putStrLn "[5]. Classify individual messages using the default model."
+    putStrLn "[6]. Show results with accuracy rates."
+    putStrLn "[7]. Exit."
     putStr "\nChoose an option (1-7): "
     flushOutput
 
@@ -103,8 +103,8 @@ processOption option = case option of
         exitSuccess
 
     _ -> do
-        clearTerminal
         putStrLn "\nInvalid option. Please try again.\n"
+        waitForAnyKey
         menu
 
 {-|
