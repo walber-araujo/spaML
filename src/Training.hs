@@ -19,6 +19,8 @@ trainModel records =
         spamProbs = calculateWordProbabilities spamWords spamCount hamWords hamCount Map.empty
     in (hamProbs, spamProbs, hamCount, spamCount)
 
+-- Função para carregar dados de um arquivo CSV, treinar o modelo e avaliar sua acurácia.
+-- Retorna os mapas de probabilidades das palavras para ham e spam.
 trainModelCSV :: FilePath -> IO (Map.Map String Double, Map.Map String Double)
 trainModelCSV filePath = do
     -- Carrega o arquivo CSV

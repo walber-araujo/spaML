@@ -8,6 +8,8 @@ import Data.List (foldl')
 import Classifier
 import Utils
 
+-- Testa o modelo classificando cada mensagem e calcula a precisão.  
+-- Retorna a fração de classificações corretas sobre o total de registros. 
 testModel :: V.Vector MyRecord -> Map.Map String Double -> Map.Map String Double -> IO Double
 testModel records hamProbs spamProbs = do
     let correct = foldl' (\acc record -> 

@@ -34,6 +34,7 @@ menu = do
     option <- getLine
     processOption option
 
+-- Processa a opção escolida pelo usuário
 processOption :: String -> IO ()
 processOption option = case option of
     "1" -> do
@@ -92,6 +93,7 @@ processOption option = case option of
         putStrLn "\nInvalid option. Please try again.\n"
         menu
 
+-- Retorna o path do arquivo CSV garantindo que tenha a extensão .csv
 getCSVFilePath :: String -> FilePath
 getCSVFilePath modelName = "./data/train_data/" ++ ensureCSVExtension modelName
 
@@ -121,6 +123,7 @@ classificationSubmenu hamProbs spamProbs = do
             putStrLn "Invalid option. Please try again."
             classificationSubmenu hamProbs spamProbs
 
+-- Recebe as mensagens spam depois as ham e as adiciona no arquivo para treinamento manual
 trainingManualLoop :: FilePath -> IO ()
 trainingManualLoop filePath = do
     saveToCSV filePath "Label" "Message"
@@ -143,6 +146,7 @@ trainingManualLoop filePath = do
                 collectMessages classification  
                 clearTerminal
 
+-- Certifica-se de salvar ou modelo ou apagá-lo a depender da escolha do usuário
 trainingManualSubmenu :: FilePath -> String -> IO ()
 trainingManualSubmenu filePath modelName = do
     putStrLn "Training Manual Submenu:\n"
@@ -167,7 +171,7 @@ trainingManualSubmenu filePath modelName = do
             putStrLn "Model was not saved and the data file has been removed."
             menu
 
--- Função para loop de entrada do usuário
+-- Função para loop de entrada de mensagens a serem classificadas
 loop :: Map.Map String Double -> Map.Map String Double -> IO ()
 loop hamProbs spamProbs = do
     putStr "> "
@@ -182,6 +186,7 @@ loop hamProbs spamProbs = do
             putStrLn $ "The message has been classified as: " ++ if result == 0 then "ham" else "spam"
             loop hamProbs spamProbs
 
+-- Recebe o path do modelo a ser adicionado 
 askPath :: IO String
 askPath = do
     putStr "Enter the model path (or 'exit' to quit): "
@@ -197,6 +202,7 @@ askPath = do
             askPath
         else return modelPath
 
+-- Adiciona novo modelo
 addNewModelSubmenu :: IO()
 addNewModelSubmenu = do
     putStr "Enter the new model name: "
@@ -252,6 +258,7 @@ reusingPreviousModelSubmenu = do
                         putStrLn $ "\n⚠️  Model " ++ modelName ++ " not found. Please try again."
                         reusingPreviousModelSubmenu
 
+-- Remove um modelo existente com exceção dos modelos default
 removeModelSubmenu :: IO ()
 removeModelSubmenu = do
     let jsonPath = "./data/models/models.json"
