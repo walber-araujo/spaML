@@ -95,6 +95,14 @@ spam,You won a free prize! Click here!
 
 ---
 
+## 🔗 Online Documentation
+
+The latest version of the documentation is available at:
+
+➡️ [spaML Documentation](https://walber-araujo.github.io/spaML/)
+
+---
+
 ## 📜 License
 This project is under the [MIT license](https://opensource.org/licenses/MIT).
 
