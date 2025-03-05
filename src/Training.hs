@@ -1,6 +1,10 @@
 module Training where
 
--- Lógica de treinamento do modelo
+{-
+Module      : Training
+Description : Model training logic.
+Stability   : stable.
+-} 
 
 import qualified Data.Vector as V
 import qualified Data.Map as Map
@@ -11,7 +15,14 @@ import Model
 import ModelTest
 import Utils
 
--- Função para treinar o modelo
+{- |
+    Train the model. 
+    Parameters:
+        - 'V.Vector MyRecord': vector with the words.
+    Return:
+        - '(Map.Map String Double, Map.Map String Double, Int, Int)': ham probability, 
+        spam probability, amount of ham words and amount of spam words. 
+-}
 trainModel :: V.Vector MyRecord -> (Map.Map String Double, Map.Map String Double, Int, Int)
 trainModel records = 
     let (hamWords, spamWords, hamCount, spamCount) = countWords records Map.empty Map.empty (0, 0)
@@ -19,33 +30,36 @@ trainModel records =
         spamProbs = calculateWordProbabilities spamWords spamCount hamWords hamCount Map.empty
     in (hamProbs, spamProbs, hamCount, spamCount)
 
--- Função para carregar dados de um arquivo CSV, treinar o modelo e avaliar sua acurácia.
--- Retorna os mapas de probabilidades das palavras para ham e spam.
+{- |
+    Calculate the model accuracy and show it with the maps of word 
+    probabilities for ham and spam.
+    Parameters:
+        - 'FilePath': path of file.
+    Return:
+        - '(Map.Map String Double, Map.Map String Double)': maps of word 
+        probabilities for ham and spam.
+-}
 trainModelCSV :: FilePath -> IO (Map.Map String Double, Map.Map String Double)
 trainModelCSV filePath = do
-    -- Carrega o arquivo CSV
+    
     arquivoCSV <- BL.readFile filePath
 
     clearTerminal
     putStrLn ("CSV file loaded from " ++ filePath)
 
-    -- Fazer o parsing do CSV
     let registros = decode HasHeader arquivoCSV :: Either String (V.Vector MyRecord)
     
-    -- Verificar o resultado e exibir
     case registros of
         Left err -> do
             putStrLn $ "Error reading the CSV: " ++ err
-            return (Map.empty, Map.empty) -- Retorno padrão em caso de erro
+            return (Map.empty, Map.empty)
 
         Right rgs -> do
-            -- Dividir o dataset em treino e teste
+
             (trainSet, testSet) <- divideCsvTrainingTest filePath rgs
 
-            -- Treinar o modelo
             let (hamProbs, spamProbs, _, _) = trainModel trainSet
 
-            -- Calcular a acurácia no conjunto de teste
             accuracy <- testModel testSet hamProbs spamProbs
             putStrLn $ "Model accuracy on the test set: " ++ printf "%.2f" (accuracy * 100) ++ "%\n"
 

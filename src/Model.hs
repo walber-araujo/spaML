@@ -1,6 +1,10 @@
 module Model where
 
--- Estrutura de dados do modelo (probabilidades, contagem de palavras)
+{-
+Module      : Model
+Description : Model data structure (probabilities, word count).
+Stability   : stable.
+-}
 
 import qualified Data.Vector as V
 import qualified Data.Map as Map

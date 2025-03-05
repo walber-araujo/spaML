@@ -15,6 +15,7 @@ spaML is a spam message classifier developed in **Haskell**, using the **Naive B
 ## 🛠️ Funcionalidades
 ✅ Model training from CSV files  
 ✅ Reuse of previously trained models  
+✅ Removal of user-trained models (default models cannot be deleted)  
 ✅ Manual training  
 ✅ Classification of individual messages  
 ✅ Display of accuracy metrics of trained models  
@@ -66,12 +67,13 @@ stack run
 ### 📌 CLI Options:
 | Option | Action |
 |---------|--------|
-| **1** | Train model with a CSV file |
-| **2** | Reuse trained model |
-| **3** | Manual training |
-| **4** | Classify message |
-| **5** | Show model accuracy |
-| **6** | Exit |
+| **1** | Reuse previous models |
+| **2** | Add new model |
+| **3** | Remove a model |
+| **4** | Train model manually |
+| **5** | Classify individual messages using the default model |
+| **6** | Show results with accuracy rates |
+| **7** | Exit |
 
 ### 📂 CSV file format
 CSV files used for training must follow this format:

@@ -1,6 +1,10 @@
 module ModelTest where
 
--- Função para testar o modelo e calcular a acurácia
+{-
+Module      : ModelTest
+Description : Function to test the model and calculate accuracy.
+Stability   : stable.
+-}
 
 import qualified Data.Vector as V
 import qualified Data.Map as Map
@@ -8,8 +12,16 @@ import Data.List (foldl')
 import Classifier
 import Utils
 
--- Testa o modelo classificando cada mensagem e calcula a precisão.  
--- Retorna a fração de classificações corretas sobre o total de registros. 
+{- |
+    Test the model by classifying each message and calculate the accuracy.
+    Parameters:
+        - 'V.Vector MyRecord': words.
+        - 'Map.Map String Double': probability of be ham. 
+        - 'Map.Map String Double': probability of be spam.
+
+    Return:
+        - 'IO Double': ratio between correct classifications and total records.
+-}
 testModel :: V.Vector MyRecord -> Map.Map String Double -> Map.Map String Double -> IO Double
 testModel records hamProbs spamProbs = do
     let correct = foldl' (\acc record -> 

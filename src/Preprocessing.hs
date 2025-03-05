@@ -1,9 +1,18 @@
 module Preprocessing where
 
-import Data.Char (toLower)
--- Funções de pré-processamento de texto (limpeza, tokenização, etc.)
+{-
+Module      : Preprocessing
+Description : Preprocessing of text (cleaning and tokenization).
+Stability   : stable.
+-}    
 
--- Lista de stop words em inglês
+import Data.Char (toLower)
+
+{- |
+    List with stop words in English.
+    Parameters:
+        - '[String]': stop words in English.
+-}
 stopWordsEn :: [String]
 stopWordsEn = ["i", "me", "my", "myself", "we", "our", "ours", "ourselves", "you", "your", "yours", "yourself", "yourselves", 
                "he", "him", "his", "himself", "she", "her", "hers", "herself", "it", "its", "itself", "they", "them", "their", 
@@ -17,11 +26,12 @@ stopWordsEn = ["i", "me", "my", "myself", "we", "our", "ours", "ourselves", "you
                "should", "now", "d", "ll", "m", "o", "re", "ve", "y", "ain", "aren", "couldn", "didn", "doesn", "hadn", 
                "hasn", "haven", "isn", "ma", "mightn", "mustn", "needn", "shan", "shouldn", "wasn", "weren", "won", "wouldn"]
 
--- Função para preprocessar o texto (tokenização simples)
 {- |
-    List with stop words in English.
+    Preprocessing the text (simple tokenization).
     Parameters:
-        - '[String]': stop words in English.
+        - 'String': word to preprocess.
+    Return:
+        - '[String]': word after the preprocess.
 -}
 tokenize :: String -> [String]
 tokenize = filter (`notElem` stopWordsEn) . map (map toLower) . words . map (\c -> if c `elem` ['a'..'z'] ++ ['A'..'Z'] then c else ' ')
