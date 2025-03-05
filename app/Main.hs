@@ -1,9 +1,8 @@
--- Função principal que será executada
 import Utils
 import CLI
-
 import Intro
 
+-- Função principal que será executada
 main :: IO ()
 main = do
     clearTerminal
