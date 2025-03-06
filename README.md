@@ -60,6 +60,19 @@ stack build
 stack run
 ```
 
+### 🧪 Tests & linter
+
+To run the linter:
+```sh
+cabal install hlint
+hlint .
+```
+
+To run the tests:
+```sh
+stack test
+```
+
 ---
 
 ## 🖥️ Usage

@@ -47,19 +47,32 @@ spaML/
 ## 🚀 Como Executar
 
 1️⃣ Clone o repositório:
-sh
+```sh
 git clone https://github.com/walber-araujo/spaML.git && cd spaML
-
+```
 
 2️⃣ Compile o projeto:
-sh
+```sh
 stack build
-
+```
 
 3️⃣ Execute:
-sh
+```sh
 stack run
+```
 
+### 🧪 Testes e linter
+
+Para rodar o linter execute:
+```sh
+cabal install hlint
+hlint .
+```
+
+Para rodar os testes execute
+```sh
+stack test
+```
 
 ---
 
@@ -83,6 +96,14 @@ ham,Hello, how are you?
 spam,You won a free prize! Click here!
 
 > Onde label pode ser *ham* ou *spam*.
+
+---
+
+## 🔗 Documentação online
+
+A versão mais recente da documentação está disponível em:
+
+➡️ [Documentação spaML](https://walber-araujo.github.io/spaML/)
 
 ---
 
