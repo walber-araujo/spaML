@@ -63,8 +63,6 @@ Linux/MacOS:
 stack run
 ```
 
-=======
-
 Windows:
 
 ```sh
