@@ -58,15 +58,12 @@ stack build
 
 3️⃣ Execute:
 
-=======
 
 Linux/MacOS:
 
 ```sh
 stack run
 ```
-
-=======
 
 Windows:
 
