@@ -57,9 +57,23 @@ stack build
 ```
 
 3️⃣ Execute:
+
+=======
+
+Linux/MacOS:
+
 ```sh
 stack run
 ```
+
+=======
+
+Windows:
+
+```sh
+stack run -- +RTS --io-manager=native
+```
+
 
 ### 🧪 Testes e linter
 
@@ -73,7 +87,6 @@ Para rodar os testes execute
 ```sh
 stack test
 ```
-
 ---
 
 ## 🖥️ Uso

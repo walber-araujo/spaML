@@ -12,7 +12,7 @@ spaML is a spam message classifier developed in **Haskell**, using the **Naive B
 
 ---
 
-## 🛠️ Funcionalidades
+## 🛠️ Features
 ✅ Model training from CSV files  
 ✅ Reuse of previously trained models  
 ✅ Removal of user-trained models (default models cannot be deleted)  
@@ -56,9 +56,21 @@ stack build
 ```
 
 3️⃣ Run:
+
+Linux/MacOS:
+
 ```sh
 stack run
 ```
+
+=======
+
+Windows:
+
+```sh
+stack run -- +RTS --io-manager=native
+```
+
 
 ### 🧪 Tests & linter
 

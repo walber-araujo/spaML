@@ -11,4 +11,5 @@ main = do
     putStrLn "Welcome to spaML!"
     putStrLn "This project performs spam detection using Machine Learning with the Naive Bayes algorithm."
     putStrLn "The code was developed in Haskell by Alex, João, Vinícius, and Walber."
+    waitForAnyKey
     menu
