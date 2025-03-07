@@ -1,7 +1,5 @@
-# 🚀 spaML  
-
 # 🚀 spaML - Classificador de Spam em Haskell
-spaML é um classificador de mensagens de spam desenvolvido em *Haskell, utilizando o algoritmo **Naive Bayes* para categorizar mensagens como *spam* ou *ham* (não spam).
+spaML é um classificador de mensagens de spam desenvolvido em *Haskell*, utilizando o algoritmo *Naive Bayes* para categorizar mensagens como *spam* ou *ham* (não spam).
 
 ---
 
