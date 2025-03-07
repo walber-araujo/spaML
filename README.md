@@ -69,6 +69,20 @@ Windows:
 stack run -- +RTS --io-manager=native
 ```
 
+
+### 🧪 Tests & linter
+
+To run the linter:
+```sh
+cabal install hlint
+hlint .
+```
+
+To run the tests:
+```sh
+stack test
+```
+
 ---
 
 ## 🖥️ Usage
@@ -92,6 +106,14 @@ ham,Hello, how are you?
 spam,You won a free prize! Click here!
 ```
 > Where `label` can be **ham** or **spam**.
+
+---
+
+## 🔗 Online Documentation
+
+The latest version of the documentation is available at:
+
+➡️ [spaML Documentation](https://walber-araujo.github.io/spaML/)
 
 ---
 
